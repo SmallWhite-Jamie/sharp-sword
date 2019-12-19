@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jamie.framework.mapper.PermissionMapper">
+
+    <select id="getPermissionByUserId" resultType="com.jamie.framework.bean.SysPermission">
+        SELECT b.* FROM sys_user_per a JOIN sys_permission b ON a.per_id = b.id WHERE b.status = '1' and a.user_id = #{id}
+    </select>
+
+    <select id="getRolesByUserId" resultType="com.jamie.framework.bean.SysRoles">
+        SELECT b.* FROM sys_user_roles a JOIN sys_roles b ON a.role_id = b.ROLEID WHERE b.ROLESTATUS = '1' AND a.user_id = #{id}
+    </select>
+
+</mapper>

@@ -1,0 +1,67 @@
+server:
+  port: 9090
+  servlet:
+    context-path: /api
+spring:
+  datasource:
+#    url: jdbc:mysql://127.0.0.1:3306/springboot?useUnicode=true&characterEncoding=UTF-8
+#    username: root
+#    password: admin
+#    driver-class-name: com.mysql.jdbc.Driver
+    #动态数据源
+    dynamic:
+      master:
+        url: jdbc:mysql://127.0.0.1:3306/springboot?useUnicode=true&characterEncoding=UTF-8
+        username: root
+        password: admin
+        driver-class-name: com.mysql.jdbc.Driver
+      slave1:
+        url: jdbc:mysql://127.0.0.1:3306/ssa?useUnicode=true&characterEncoding=UTF-8
+        username: root
+        password: admin
+        driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: redis123
+  quartz:
+    job-store-type: memory
+    properties:
+      org:
+        quartz:
+          jobStore:
+            class: org.quartz.simpl.RAMJobStore
+  data:
+    elasticsearch:
+      cluster-name: elasticsearch
+      cluster-nodes: 192.168.74.131:9200
+logging:
+  level:
+    com:
+      lz:
+        springboot:
+          mybatis:
+            springbootmybatis:
+              mapper: trace
+  path: D:\
+jobCron: 0/5 * * * * ? *
+# mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+# 系统配置
+app:
+  key: APP1
+  login-salt-timeout-seconds: 60
+  exclude-urls: /search/**,/test/**,/user/**
+shiro:
+  jwt:
+    tokenName: X-TOKEN
+    secret: 123456
+    issuer: lz
+    subject: test
+    expire-second: 3600
+    refresh-token-interval: 300
+    single-login: true
+zookeeper:
+  connect-addr: 192.168.74.128:2181
+  namespace: super
