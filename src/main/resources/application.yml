@@ -43,7 +43,7 @@ logging:
           mybatis:
             springbootmybatis:
               mapper: trace
-  path: D:\
+  path: D:\logs
 jobCron: 0/5 * * * * ? *
 # mybatis-plus
 mybatis-plus:
