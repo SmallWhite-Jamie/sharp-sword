@@ -76,13 +76,13 @@ public class JWTRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         JwtToken jwtToken = (JwtToken) token;
         if (jwtToken == null || StringUtils.isBlank(jwtToken.getToken())) {
-            throw new AuthenticationException("token不能为空");
+            throw new AuthenticationException(VerifyResult.NULL.toString());
         }
         VerifyResult verifyResult = JWTUtil.verifyToken(jwtToken.getToken(), null);
         if (verifyResult == VerifyResult.EXPIRED) {
-            throw new AuthenticationException("token已过期");
+            throw new AuthenticationException(VerifyResult.EXPIRED.toString());
         } else if (verifyResult == VerifyResult.FAILURE) {
-            throw new AuthenticationException("token验证失败");
+            throw new AuthenticationException(VerifyResult.FAILURE.toString());
         }
         // 验证redis登录信息
         AppProperties appProperties = ApplicationContextUtil.getBean(AppProperties.class);

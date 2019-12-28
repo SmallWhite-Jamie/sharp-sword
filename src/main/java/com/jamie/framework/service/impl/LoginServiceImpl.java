@@ -90,8 +90,8 @@ public class LoginServiceImpl implements LoginService {
             if (StringUtils.isBlank(tokenName)) {
                 tokenName = AppConstant.DEF_TOKEN_NAME;
             }
-            CookieUtil.set(httpServletResponse, AppConstant.TOKEN_NAME_KEY, tokenName, jwtProperties.getExpireSecond(), "/");
-            CookieUtil.set(httpServletResponse, tokenName, token, jwtProperties.getExpireSecond(), "/");
+            CookieUtil.set(httpServletResponse, AppConstant.TOKEN_NAME_KEY, tokenName, -1, "/");
+            CookieUtil.set(httpServletResponse, tokenName, token, -1, "/");
             httpServletResponse.setHeader(AppConstant.TOKEN_NAME_KEY, token);
             httpServletResponse.setHeader(tokenName, token);
             // 保存用户信息到redis

@@ -38,11 +38,9 @@ spring:
 logging:
   level:
     com:
-      lz:
-        springboot:
-          mybatis:
-            springbootmybatis:
-              mapper: trace
+      jamie:
+        framework:
+          mapper: debug
   path: D:\logs
 jobCron: 0/5 * * * * ? *
 # mybatis-plus

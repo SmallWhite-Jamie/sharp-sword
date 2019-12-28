@@ -14,7 +14,9 @@ public class CookieUtil {
     public static void set(HttpServletResponse response, String key, String value,  int expiry, String path){
         Cookie cookie = new Cookie(key, value);
         cookie.setPath(path);
-        cookie.setMaxAge(expiry);
+        if (expiry > 0) {
+            cookie.setMaxAge(expiry);
+        }
         response.addCookie(cookie);
     }
 

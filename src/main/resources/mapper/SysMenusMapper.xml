@@ -2,24 +2,40 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jamie.framework.mapper.SysMenusMapper">
-    <select id="list" resultType="com.jamie.framework.bean.SysMenus">
-        SELECT DISTINCT
-            m.*
-        FROM
-            sys_menus m
-            JOIN sys_role_per p ON m.id = p.menu_id
-            JOIN sys_user_roles u ON u.role_id = p.role_id
-        WHERE
-            m.enable =  '1' and u.user_id = #{userId}
+    <sql id="menu_where">
+        <where>
+            c.`user_id` = #{userId}
             <if test="menu.code != null">
-                <bind name="pattern" value="'%' + menu.getCode() + '%'" />
-                and m.`code` = #{pattern}
+                and a.`code` = #{menu.code}
             </if>
             <if test="menu.name != null">
                 <bind name="pattern" value="'%' + menu.getName() + '%'" />
-                and m.`name` like #{pattern}
+                and a.`name` like #{pattern}
             </if>
-      order by m.sort
+        </where>
+    </sql>
+
+    <select id="list" resultType="com.jamie.framework.bean.SysMenus">
+        SELECT
+          a.*
+        FROM
+          sys_menus a
+        JOIN sys_menus_role b
+          ON a.`id` = b.`menu_id`
+        JOIN sys_user_roles c
+          ON b.`role_id` = c.`role_id`
+        <include refid="menu_where"/>
+        UNION
+        SELECT
+          a.*
+        FROM
+          sys_menus a
+        JOIN sys_menus_per b
+          ON a.`id` = b.`menu_id`
+        JOIN sys_user_per c
+          ON b.per_id = c.per_id
+        <include refid="menu_where"/>
+        ORDER BY sort
     </select>
 
 </mapper>

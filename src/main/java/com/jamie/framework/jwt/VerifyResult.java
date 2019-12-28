@@ -8,5 +8,6 @@ package com.jamie.framework.jwt;
 public enum VerifyResult {
     SUCCESS,
     FAILURE,
-    EXPIRED
+    EXPIRED,
+    NULL
 }

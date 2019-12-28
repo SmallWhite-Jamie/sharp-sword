@@ -1,11 +1,14 @@
 package com.jamie.framework.shiro.filter;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jamie.framework.conf.AppProperties;
 import com.jamie.framework.constant.RedisConstant;
 import com.jamie.framework.jwt.JWTUtil;
 import com.jamie.framework.jwt.JwtProperties;
 import com.jamie.framework.jwt.JwtToken;
 import com.jamie.framework.util.ApplicationContextUtil;
+import com.jamie.framework.util.api.ApiCode;
+import com.jamie.framework.util.api.ApiResult;
 import com.jamie.framework.util.http.CookieUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -137,16 +140,17 @@ public class JWTFilter extends AuthenticatingFilter {
     @Override
     protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e, ServletRequest request, ServletResponse response) {
         log.warn(e.getMessage(), e);
-        servletResponse((HttpServletResponse) response, e.getMessage());
+        servletResponse((HttpServletResponse) response, e.getMessage(), ApiCode.LOGIN_EXCEPTION.getCode());
         return false;
     }
 
-    private void servletResponse(HttpServletResponse res, String data) {
-        res.setStatus(HttpServletResponse.SC_OK);
+    private void servletResponse(HttpServletResponse res, String data, int code) {
+        res.setStatus(200);
         res.setHeader("Content-type", "text/json;charset=UTF-8");
         res.setCharacterEncoding("UTF-8");
         try {
-            res.getWriter().write(data);
+            ApiResult result = code == 200 ? ApiResult.ok(data) : ApiResult.fail(ApiCode.LOGIN_EXCEPTION, data);
+            res.getWriter().write(JSONObject.toJSONString(result));
         } catch (IOException e) {
             e.printStackTrace();
         }
