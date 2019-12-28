@@ -2,6 +2,7 @@ package com.jamie.framework.shiro.filter;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jamie.framework.conf.AppProperties;
+import com.jamie.framework.constant.AppConstant;
 import com.jamie.framework.constant.RedisConstant;
 import com.jamie.framework.jwt.JWTUtil;
 import com.jamie.framework.jwt.JwtProperties;
@@ -112,17 +113,21 @@ public class JWTFilter extends AuthenticatingFilter {
     protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) throws Exception {
         JwtToken jwtToken = (JwtToken) token;
         if (JWTUtil.checkRefresh(jwtToken)) {
+            log.info("刷新TOKEN...");
             String userId = jwtToken.getUsername();
+            // 生成新的token
+            String newToken = JWTUtil.generateToken(userId);
             HttpServletResponse httpServletResponse = (HttpServletResponse) response;
             // 刷新cookies
-            CookieUtil.set(httpServletResponse, jwtProperties.getTokenName(), jwtToken.getToken(), (int) jwtProperties.getExpireSecond(), "/");
-            httpServletResponse.setHeader(jwtProperties.getTokenName(), jwtToken.getToken());
+            CookieUtil.set(httpServletResponse, jwtProperties.getTokenName(), newToken, (int) jwtProperties.getExpireSecond(), "/");
+            httpServletResponse.setHeader(jwtProperties.getTokenName(), newToken);
+            httpServletResponse.setHeader(AppConstant.TOKEN_REFRESH, "OK");
 
             // 刷新redis
             RedisTemplate redisTemplate = (RedisTemplate) ApplicationContextUtil.getBean("redisTemplate");
             String appKey = ApplicationContextUtil.getBean(AppProperties.class).getKey();
             redisTemplate.expire(RedisConstant.USER_INFO_KEY + appKey + userId, jwtProperties.getExpireSecond(), TimeUnit.SECONDS);
-            redisTemplate.expire(RedisConstant.USER_TOKEN_KEY + appKey + userId, jwtProperties.getExpireSecond(), TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(RedisConstant.USER_TOKEN_KEY + appKey + userId, newToken, jwtProperties.getExpireSecond(), TimeUnit.SECONDS);
             redisTemplate.expire(RedisConstant.USER_ROLE_KEY + appKey + userId, jwtProperties.getExpireSecond(), TimeUnit.SECONDS);
             redisTemplate.expire(RedisConstant.USER_PERMISSION_KEY + appKey + userId, jwtProperties.getExpireSecond(), TimeUnit.SECONDS);
         }

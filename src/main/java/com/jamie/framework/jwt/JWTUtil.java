@@ -178,7 +178,7 @@ public class JWTUtil {
 
         // 获取过期时间
         Date expiresAt = JWT.decode(token).getExpiresAt();
-        // 如果 当前时间 + (超时时间 - 刷新时间) > 过期时间，则刷新token
+        // 如果 当前时间 + (超时时间 - 刷新时间) > 过期时间(未来某个时间点)，则刷新token
         boolean refresh = DateUtils.addSeconds(new Date(), jwtProperties.getExpireSecond() - jwtProperties.getRefreshTokenInterval()).after(expiresAt);
         return refresh;
     }

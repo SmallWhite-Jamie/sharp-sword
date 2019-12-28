@@ -50,7 +50,7 @@ mybatis-plus:
 app:
   key: APP1
   login-salt-timeout-seconds: 60
-  exclude-urls: /search/**,/test/**,/user/**
+  exclude-urls: /search/**,/test/**
 shiro:
   jwt:
     tokenName: X-TOKEN
@@ -58,7 +58,7 @@ shiro:
     issuer: lz
     subject: test
     expire-second: 3600
-    refresh-token-interval: 300
+    refresh-token-interval: 30 #值越小，刷新率越高
     single-login: true
 zookeeper:
   connect-addr: 192.168.74.128:2181
