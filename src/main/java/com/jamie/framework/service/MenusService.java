@@ -1,6 +1,7 @@
 package com.jamie.framework.service;
 
 import com.jamie.framework.bean.SysMenus;
+import com.jamie.framework.treenode.TreeNode;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface MenusService {
      * @param menu
      * @return
      */
-    List<SysMenus> tree(SysMenus menu);
+    List<TreeNode> tree(SysMenus menu);
 
     /**
      * 根据ID获取菜单详情

@@ -79,7 +79,7 @@ public class LoginServiceImpl implements LoginService {
         List<SysUser> sysUsers = userMapper.selectByMap(map);
         if (CollectionUtils.isEmpty(sysUsers)) {
             log.warn("用户[{}]: 用户名或密码不正确", userid);
-            return ApiResult.fail(ApiCode.LOGIN_EXCEPTION, "用户名或密码不正确");
+            return ApiResult.fail(ApiCode.USERNAME_PASSWORD_ERROR, "用户名或密码不正确");
         }
         SysUser sysUser = sysUsers.get(0);
         String md5Hex = DigestUtil.md5Hex(sysUser.getPwHash().toUpperCase() + salt).toUpperCase();
@@ -119,7 +119,7 @@ public class LoginServiceImpl implements LoginService {
             return ApiResult.ok(data);
         }
         log.warn("用户[{}]: 用户名或密码不正确", userid);
-        return ApiResult.fail(ApiCode.LOGIN_EXCEPTION, "用户名或密码不正确");
+        return ApiResult.fail(ApiCode.USERNAME_PASSWORD_ERROR, "用户名或密码不正确");
     }
 
     @Override

@@ -1,10 +1,12 @@
 package com.jamie.framework.bean;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author lizheng
@@ -22,8 +24,10 @@ public class SysMenus implements Serializable {
     private String router;
     private String enable;
     private String pid;
-    private String level;
+    private int level;
     private int sort;
     private String icon;
     private int type;
+    @TableField(exist = false)
+    private List<SysMenus> children;
 }

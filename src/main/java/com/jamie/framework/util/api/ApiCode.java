@@ -39,6 +39,7 @@ public enum ApiCode {
 
     LOGIN_EXCEPTION(4000,"登陆失败"),
 
+    USERNAME_PASSWORD_ERROR(4001, "用户名或密码错误"),
 
     SYSTEM_EXCEPTION(5000,"系统异常!"),
 
