@@ -3,7 +3,9 @@ package com.jamie.framework.treenode.adapter;
 import com.jamie.framework.bean.SysMenus;
 import com.jamie.framework.treenode.TreeNode;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author lizheng
@@ -24,6 +26,12 @@ public class SysMenusTreeNodeAdapter implements TreeNodeAdapter<SysMenus> {
         treeNode.setId(node.getId());
         treeNode.setText(node.getName());
         treeNode.setParentId(node.getPid());
+        Map<String, Object> map = new HashMap<>();
+        map.put("router", node.getRouter());
+        map.put("level", node.getLevel());
+        map.put("icon", node.getIcon());
+        map.put("code", node.getCode());
+        treeNode.setMetaMap(map);
         return treeNode;
     }
 

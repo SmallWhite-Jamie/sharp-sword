@@ -3,6 +3,7 @@ package com.jamie.framework.treenode;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author lizheng
@@ -15,4 +16,5 @@ public class TreeNode {
     private String text;
     private String parentId;
     private List<TreeNode> children;
+    private Map<String, Object> metaMap;
 }
