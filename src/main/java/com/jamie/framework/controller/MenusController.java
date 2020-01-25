@@ -5,6 +5,7 @@ import com.jamie.framework.service.MenusService;
 import com.jamie.framework.util.api.ApiResult;
 import com.jamie.framework.treenode.TreeNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,5 +33,17 @@ public class MenusController {
     public ApiResult tree(SysMenus menu) {
         List<TreeNode> tree = menusService.tree(menu);
         return ApiResult.ok(tree);
+    }
+
+    @RequestMapping("getById/{id}")
+    public ApiResult getById(@PathVariable String id) {
+        SysMenus menu = menusService.getById(id);
+        return ApiResult.ok(menu);
+    }
+
+    @RequestMapping("save")
+    public ApiResult save(SysMenus menus) {
+        SysMenus menu = menusService.save(menus);
+        return ApiResult.ok(menu);
     }
 }

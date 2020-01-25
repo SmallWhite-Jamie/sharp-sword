@@ -1,16 +1,19 @@
 package com.jamie.framework.service.impl;
 
 import com.jamie.framework.bean.SysMenus;
+import com.jamie.framework.idgenerator.IdGenerator;
 import com.jamie.framework.mapper.SysMenusMapper;
 import com.jamie.framework.service.MenusService;
 import com.jamie.framework.treenode.adapter.SysMenusTreeNodeAdapter;
 import com.jamie.framework.treenode.TreeNode;
 import com.jamie.framework.treenode.TreeNodeBuilder;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,6 +29,9 @@ public class MenusServiceImpl implements MenusService {
 
     @Autowired
     private AppBaseService appBaseService;
+
+    @Autowired
+    private IdGenerator idGenerator;
 
     @Override
     public List<SysMenus> list(SysMenus menu) {
@@ -45,11 +51,19 @@ public class MenusServiceImpl implements MenusService {
 
     @Override
     public SysMenus getById(String id) {
-        return null;
+        return sysMenusMapper.selectById(id);
     }
 
     @Override
     public SysMenus save(SysMenus menu) {
-        return null;
+        if (StringUtils.isNotBlank(menu.getId())) {
+            menu.setUpdateTime(new Date());
+            sysMenusMapper.updateById(menu);
+        } else {
+            menu.setId(idGenerator.nextIdStr());
+            menu.setCreateTime(new Date());
+            sysMenusMapper.insert(menu);
+        }
+        return menu;
     }
 }

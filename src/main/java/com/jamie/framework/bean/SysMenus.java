@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ public class SysMenus implements Serializable {
     private String id;
     private String name;
     private String code;
-    private String desc;
+    private String directions;
     private String router;
     private String enable;
     private String pid;
@@ -28,6 +29,13 @@ public class SysMenus implements Serializable {
     private int sort;
     private String icon;
     private int type;
+
+    @TableField("create_time")
+    private Date createTime;
+
+    @TableField("update_time")
+    private Date updateTime;
+
     @TableField(exist = false)
     private List<SysMenus> children;
 }
