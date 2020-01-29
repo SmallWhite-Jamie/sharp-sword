@@ -38,4 +38,6 @@ public interface MenusService {
      * @return
      */
     SysMenus save(SysMenus menu);
+
+    void delete(String id);
 }

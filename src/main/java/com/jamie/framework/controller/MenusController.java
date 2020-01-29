@@ -46,4 +46,10 @@ public class MenusController {
         SysMenus menu = menusService.save(menus);
         return ApiResult.ok(menu);
     }
+
+    @RequestMapping("delete/{id}")
+    public ApiResult delete(@PathVariable String id) {
+        menusService.delete(id);
+        return ApiResult.ok();
+    }
 }

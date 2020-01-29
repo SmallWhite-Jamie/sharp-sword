@@ -22,7 +22,7 @@ public class LoginController {
 
 
     @RequestMapping("/login")
-    public ApiResult testToken(String username, String password, HttpServletResponse httpServletResponse) {
+    public ApiResult login(String username, String password, HttpServletResponse httpServletResponse) {
         return loginService.login(username, password, httpServletResponse);
     }
 

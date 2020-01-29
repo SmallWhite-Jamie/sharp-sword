@@ -62,8 +62,14 @@ public class MenusServiceImpl implements MenusService {
         } else {
             menu.setId(idGenerator.nextIdStr());
             menu.setCreateTime(new Date());
+            menu.setUpdateTime(new Date());
             sysMenusMapper.insert(menu);
         }
         return menu;
+    }
+
+    @Override
+    public void delete(String id) {
+        sysMenusMapper.deleteById(id);
     }
 }
