@@ -8,15 +8,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 限制同一IP在某个时间段内的访问次数
  * @author lizheng
  * @date: 9:17 2020/01/29
- * @Description: AccessLimit
+ * @Description: RedisAccessLimit
  */
 @Documented
 @Target({ ElementType.FIELD, ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface AccessLimit {
+public @interface RedisAccessLimit {
     /**
      * 访问次数 指定second时间段内的访问次数限制
      */

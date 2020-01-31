@@ -24,4 +24,14 @@ public class AppProperties {
      * 不拦截的URL
      */
     private String excludeUrls;
+
+    /**
+     * rateLimit 每秒允许处理请求个数
+     */
+    private double rateLimitPermitsCount = 5D;
+
+    /**
+     * rateLimit 超时时间
+     */
+    private long rateLimitWaitTimeout = 5;
 }

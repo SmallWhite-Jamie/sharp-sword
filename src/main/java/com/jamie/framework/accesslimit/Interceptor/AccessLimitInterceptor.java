@@ -1,7 +1,7 @@
 package com.jamie.framework.accesslimit.Interceptor;
 
 import com.alibaba.fastjson.JSONObject;
-import com.jamie.framework.accesslimit.annotation.AccessLimit;
+import com.jamie.framework.accesslimit.annotation.RedisAccessLimit;
 import com.jamie.framework.util.ApplicationContextUtil;
 import com.jamie.framework.util.api.ApiResult;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * redis实现的接口限流拦截器
  * @author lizheng
  * @date: 9:20 2020/01/29
  * @Description: AccessLimitInterceptor
@@ -27,10 +28,10 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             Method method = handlerMethod.getMethod();
-            if (!method.isAnnotationPresent(AccessLimit.class)) {
+            if (!method.isAnnotationPresent(RedisAccessLimit.class)) {
                 return true;
             }
-            AccessLimit accessLimit = method.getAnnotation(AccessLimit.class);
+            RedisAccessLimit accessLimit = method.getAnnotation(RedisAccessLimit.class);
             if (accessLimit == null) {
                 return true;
             }

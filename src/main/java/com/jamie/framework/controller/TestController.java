@@ -1,6 +1,7 @@
 package com.jamie.framework.controller;
 
-import com.jamie.framework.accesslimit.annotation.AccessLimit;
+import com.jamie.framework.accesslimit.annotation.RateAccessLimit;
+import com.jamie.framework.accesslimit.annotation.RedisAccessLimit;
 import com.jamie.framework.lock.zookeeper.ZookeeperCuratorFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
@@ -17,10 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestController {
 
-    @AccessLimit
-    @RequestMapping("access")
-    public String test1() {
-        return "12345";
+    @RedisAccessLimit
+    @RequestMapping("testRedisAccessLimit")
+    public String testRedisAccessLimit() {
+        return "testRedisAccessLimit";
+    }
+
+    @RateAccessLimit
+    @RequestMapping("testRateAccessLimit")
+    public String testRateAccessLimit() {
+        return "testRateAccessLimit";
     }
 
     /*@Autowired

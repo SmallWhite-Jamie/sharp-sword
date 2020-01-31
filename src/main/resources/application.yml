@@ -51,6 +51,8 @@ app:
   key: APP1
   login-salt-timeout-seconds: 60
   exclude-urls: /search/**,/test/**
+  rate-limit-permits-count: 2
+  rate-limit-wait-timeout: 0
 shiro:
   jwt:
     tokenName: X-TOKEN
