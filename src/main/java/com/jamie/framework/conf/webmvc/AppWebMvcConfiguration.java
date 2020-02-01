@@ -3,7 +3,7 @@ package com.jamie.framework.conf.webmvc;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.jamie.framework.accesslimit.Interceptor.AccessLimitInterceptor;
+import com.jamie.framework.accesslimit.interceptor.AccessLimitInterceptor;
 import com.jamie.framework.conf.webmvc.converters.StringToDateConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;

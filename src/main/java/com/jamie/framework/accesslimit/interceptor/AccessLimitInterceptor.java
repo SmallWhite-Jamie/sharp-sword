@@ -1,4 +1,4 @@
-package com.jamie.framework.accesslimit.Interceptor;
+package com.jamie.framework.accesslimit.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jamie.framework.accesslimit.annotation.RedisAccessLimit;
