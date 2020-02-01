@@ -4,8 +4,6 @@ import com.jamie.framework.idgenerator.IdGenerator;
 import com.jamie.framework.idgenerator.SnowflakeIdGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * @author lizheng
@@ -15,13 +13,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration
 public class AppConf {
 
-    @Bean
-    public RedisTemplate redisTemplate(
-            RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<Object, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory);
-        return template;
-    }
+//    @Bean
+//    public RedisTemplate redisTemplate(
+//            RedisConnectionFactory redisConnectionFactory) {
+//        RedisTemplate<Object, Object> template = new RedisTemplate<>();
+//        template.setConnectionFactory(redisConnectionFactory);
+//        return template;
+//    }
 
     @Bean
     IdGenerator idGenerator() {

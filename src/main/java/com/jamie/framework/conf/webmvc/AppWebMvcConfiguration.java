@@ -7,10 +7,13 @@ import com.jamie.framework.accesslimit.interceptor.AccessLimitInterceptor;
 import com.jamie.framework.conf.webmvc.converters.StringToDateConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +23,12 @@ import java.util.List;
  */
 @Configuration
 public class AppWebMvcConfiguration implements WebMvcConfigurer {
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.defaultContentType(MediaType.APPLICATION_JSON_UTF8);
+    }
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
@@ -30,6 +39,10 @@ public class AppWebMvcConfiguration implements WebMvcConfigurer {
                 SerializerFeature.WriteMapNullValue);
         fastJsonConfig.setDateFormat("yyyy-MM-dd hh:mm:ss");
         converter.setFastJsonConfig(fastJsonConfig);
+        // 设置默认的 Content-Type: application/json;charset=UTF-8
+        List<MediaType> mediaTypes = new ArrayList<>();
+        mediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
+        converter.setSupportedMediaTypes(mediaTypes);
         converters.add(converter);
     }
 

@@ -3,6 +3,7 @@ package com.jamie.framework.controller;
 import com.jamie.framework.accesslimit.annotation.RateAccessLimit;
 import com.jamie.framework.accesslimit.annotation.RedisAccessLimit;
 import com.jamie.framework.lock.zookeeper.ZookeeperCuratorFactory;
+import com.jamie.framework.util.api.ApiResult;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +21,20 @@ public class TestController {
 
     @RedisAccessLimit
     @RequestMapping("testRedisAccessLimit")
-    public String testRedisAccessLimit() {
-        return "testRedisAccessLimit";
+    public ApiResult testRedisAccessLimit() {
+        return ApiResult.ok("testRedisAccessLimit");
     }
 
-    @RateAccessLimit
-    @RequestMapping("testRateAccessLimit")
-    public String testRateAccessLimit() {
-        return "testRateAccessLimit";
+    @RateAccessLimit(qps = 1)
+    @RequestMapping(value = "testRateAccessLimit")
+    public ApiResult testRateAccessLimit() {
+        return ApiResult.ok("testRateAccessLimit");
+    }
+
+    @RateAccessLimit(qps = 3)
+    @RequestMapping(value = "testRateAccessLimit2")
+    public ApiResult testRateAccessLimit2() {
+        return ApiResult.ok("testRateAccessLimit2");
     }
 
     /*@Autowired
