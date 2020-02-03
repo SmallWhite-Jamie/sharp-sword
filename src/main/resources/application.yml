@@ -46,11 +46,12 @@ jobCron: 0/5 * * * * ? *
 # mybatis-plus
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
+  type-handlers-package: com.jamie.framework.mybatis.handler
 # 系统配置
 app:
   key: APP1
   login-salt-timeout-seconds: 60
-  exclude-urls: /search/**,/test/**
+  exclude-urls: /search/**,/test/**,/file/**
   rate-limit-permits-count: 2
   rate-limit-wait-timeout: 0
 shiro:

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan("com.jamie.framework.mapper")
+@MapperScan("com.jamie.framework.**.mapper")
 public class MybatisConf {
     @Bean
     public PaginationInterceptor paginationInterceptor() {
