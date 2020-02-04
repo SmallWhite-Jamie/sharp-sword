@@ -2,11 +2,16 @@ package com.jamie.framework.controller;
 
 import com.jamie.framework.accesslimit.annotation.RateAccessLimit;
 import com.jamie.framework.accesslimit.annotation.RedisAccessLimit;
+import com.jamie.framework.bean.User;
+import com.jamie.framework.datasource.DynamicDataSourceContextHolder;
 import com.jamie.framework.lock.zookeeper.ZookeeperCuratorFactory;
+import com.jamie.framework.service.UserServiceI;
+import com.jamie.framework.service.impl.TestService;
 import com.jamie.framework.util.api.ApiResult;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +23,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/test")
 public class TestController {
+
+    @Autowired
+    private TestService testService;
+
+    @RequestMapping("test1")
+    public ApiResult test1() {
+        return ApiResult.ok(testService.test1());
+    }
+
+    @RequestMapping("test2")
+    public ApiResult test2() {
+        return ApiResult.ok(testService.test2());
+    }
 
     @RedisAccessLimit
     @RequestMapping("testRedisAccessLimit")
@@ -35,6 +53,30 @@ public class TestController {
     @RequestMapping(value = "testRateAccessLimit2")
     public ApiResult testRateAccessLimit2() {
         return ApiResult.ok("testRateAccessLimit2");
+    }
+
+    @Autowired
+    UserServiceI userServiceI;
+
+    @Transactional(rollbackFor = Exception.class)
+    @RequestMapping(value = "transactionalTest")
+    public ApiResult transactionalTest() {
+        User user = new User();
+        user.setName("Tx test1");
+        user.setAddr("1111");
+        user.setAge(18);
+        userServiceI.save(user);
+        User user2 = new User();
+        user2.setName("Tx test2");
+        user2.setAddr("22222");
+        user2.setAge(22);
+        // 测试异常
+        int a = 1 / 0;
+        DynamicDataSourceContextHolder.setDataSourceType("slave1");
+        userServiceI.save(user2);
+        DynamicDataSourceContextHolder.clearDataSourceType();
+
+        return ApiResult.ok();
     }
 
     /*@Autowired

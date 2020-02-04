@@ -10,7 +10,6 @@ import com.jamie.framework.idgenerator.IdGenerator;
 import com.jamie.framework.mapper.UserMapper;
 import com.jamie.framework.service.PermissionService;
 import com.jamie.framework.service.UserServiceI;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,10 +51,8 @@ public class UserServiceImpl implements UserServiceI {
 //    @CachePut(value = "user", key = "'User:'+#user.id")
     @Override
     public User save(User user) {
-        if (SecurityUtils.getSubject().hasRole("admin")) {
-            user.setId(idGenerator.nextIdStr());
-            userMapper.insert(user);
-        }
+        user.setId(idGenerator.nextIdStr());
+        userMapper.insert(user);
         return user;
     }
 

@@ -5,29 +5,49 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+/**
+ * 添加 @Order 解决 @Transactional 使用时切换数据源失败。
+ * @author jamie.li
+ */
 @Aspect
 @Order(-10)
 @Component
 @Slf4j
 public class DynamicDataSourceAspect {
 
-    @Before(value = "@annotation(targetDataSource)")
-    public void changeDataSource(JoinPoint point, TargetDataSource targetDataSource) throws Throwable {
-        String dsId = targetDataSource.value();
+    @Pointcut("@annotation(com.jamie.framework.datasource.TargetDataSource) || @within(com.jamie.framework.datasource.TargetDataSource)")
+    public void pointcut() {
+
+    }
+
+    @Before("pointcut()")
+    public void changeDataSource(JoinPoint point) {
+        MethodSignature methodSignature = (MethodSignature) point.getSignature();
+        TargetDataSource annotation = AnnotationUtils.findAnnotation(methodSignature.getMethod(), TargetDataSource.class);
+        if (annotation == null) {
+            annotation = AnnotationUtils.findAnnotation(methodSignature.getDeclaringType(), TargetDataSource.class);
+        }
+        String dsId = null;
+        if (annotation != null) {
+            dsId = annotation.value();
+        }
         if (!DynamicDataSourceContextHolder.containsDataSource(dsId)) {
             log.warn("数据源[{}]不存在, {}, 使用默认数据源。", dsId, point.getSignature());
             DynamicDataSourceContextHolder.setDataSourceType(DynamicDataSourceContextHolder.DEF_KEY);
         } else {
             log.info("使用数据源[{}], {}" , dsId, point.getSignature());
-            DynamicDataSourceContextHolder.setDataSourceType(targetDataSource.value());
+            DynamicDataSourceContextHolder.setDataSourceType(dsId);
         }
     }
 
-    @After(value = "@annotation(targetDataSource)")
-    public void restoreDataSource(JoinPoint point, TargetDataSource targetDataSource) {
+    @After("pointcut()")
+    public void restoreDataSource(JoinPoint point) {
         log.info("恢复数据源 [{}]", point.getSignature());
         DynamicDataSourceContextHolder.clearDataSourceType();
     }
