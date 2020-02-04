@@ -71,18 +71,24 @@ public class ShiroConfig {
         factoryBean.setUnauthorizedUrl("403");
         factoryBean.setLoginUrl("/login");
         // 设置filter key 需要连接的地址， value 拦截器名称
-        Map<String, String> stringStringMap = factoryBean.getFilterChainDefinitionMap();
+        Map<String, String> filterChainDefinitionMap = factoryBean.getFilterChainDefinitionMap();
         if (StringUtils.isNotBlank(appProperties.getExcludeUrls())) {
             log.info("系统配置自定义开放URL: {}", appProperties.getExcludeUrls());
             String[] urls = appProperties.getExcludeUrls().trim().split(",");
             for (String url : urls) {
-                stringStringMap.put(url, "anon");
+                filterChainDefinitionMap.put(url, "anon");
             }
         }
-        stringStringMap.put("/login", "anon");
-        stringStringMap.put("/getLoginSalt", "anon");
-//        stringStringMap.put("/logout", "logoutFilter");
-        stringStringMap.put("/**", "jwtFilter");
+        filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/getLoginSalt", "anon");
+        // swagger过滤
+        filterChainDefinitionMap.put("/swagger-ui.html", "anon");
+        filterChainDefinitionMap.put("/webjars/springfox-swagger-ui/**", "anon");
+        filterChainDefinitionMap.put("/swagger-resources/**", "anon");
+        filterChainDefinitionMap.put("/v2/api-docs", "anon");
+
+//        filterChainDefinitionMap.put("/logout", "logoutFilter");
+        filterChainDefinitionMap.put("/**", "jwtFilter");
 
         return factoryBean;
     }

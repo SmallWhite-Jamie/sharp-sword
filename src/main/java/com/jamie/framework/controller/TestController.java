@@ -8,6 +8,8 @@ import com.jamie.framework.lock.zookeeper.ZookeeperCuratorFactory;
 import com.jamie.framework.service.UserServiceI;
 import com.jamie.framework.service.impl.TestService;
 import com.jamie.framework.util.api.ApiResult;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +24,17 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/test")
+@Api(value = "/TestController", description = "测试使用Controller")
 public class TestController {
 
     @Autowired
     private TestService testService;
 
     @RequestMapping("test1")
+    @ApiOperation(
+            value = "测试一",
+            notes = "测试一说明",
+            response = ApiResult.class)
     public ApiResult test1() {
         return ApiResult.ok(testService.test1());
     }
