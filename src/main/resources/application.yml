@@ -11,12 +11,12 @@ spring:
     #动态数据源
     dynamic:
       master:
-        url: jdbc:mysql://127.0.0.1:3306/springboot?useUnicode=true&characterEncoding=UTF-8
+        url: jdbc:mysql://127.0.0.1:3306/springboot?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
         username: root
         password: admin
         driver-class-name: com.mysql.jdbc.Driver
       slave1:
-        url: jdbc:mysql://127.0.0.1:3306/ssa?useUnicode=true&characterEncoding=UTF-8
+        url: jdbc:mysql://127.0.0.1:3306/ssa?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
         username: root
         password: admin
         driver-class-name: com.mysql.jdbc.Driver
@@ -47,13 +47,13 @@ jobCron: 0/5 * * * * ? *
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   type-handlers-package: com.jamie.framework.mybatis.handler
+  global-config:
+    banner: false
 # 系统配置
 app:
   key: APP1
   login-salt-timeout-seconds: 60
-  exclude-urls: /search/**,/test/**,/file/**
-  rate-limit-permits-count: 2
-  rate-limit-wait-timeout: 0
+  exclude-urls: /instances,/actuator/**,/search/**,/test/**,/file/**
 shiro:
   jwt:
     tokenName: X-TOKEN
