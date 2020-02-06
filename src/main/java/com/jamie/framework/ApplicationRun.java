@@ -1,6 +1,6 @@
 package com.jamie.framework;
 
-import com.jamie.framework.datasource.EnableDynamicDataSource;
+import com.jamie.framework.datasource.annotation.EnableDynamicDataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;

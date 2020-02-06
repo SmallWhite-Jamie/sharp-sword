@@ -11,15 +11,17 @@ spring:
     #动态数据源
     dynamic:
       master:
-        url: jdbc:mysql://127.0.0.1:3306/springboot?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+        jdbc-url: jdbc:mysql://127.0.0.1:3306/springboot?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
         username: root
         password: admin
         driver-class-name: com.mysql.jdbc.Driver
+        pool-name: Master-DB
       slave1:
-        url: jdbc:mysql://127.0.0.1:3306/ssa?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+        jdbc-url: jdbc:mysql://127.0.0.1:3306/ssa?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
         username: root
         password: admin
         driver-class-name: com.mysql.jdbc.Driver
+        pool-name: Slave1-DB
   redis:
     host: 127.0.0.1
     port: 6379

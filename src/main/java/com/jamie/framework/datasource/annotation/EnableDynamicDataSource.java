@@ -1,5 +1,6 @@
-package com.jamie.framework.datasource;
+package com.jamie.framework.datasource.annotation;
 
+import com.jamie.framework.datasource.DynamicDataSourceRegister;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Retention;

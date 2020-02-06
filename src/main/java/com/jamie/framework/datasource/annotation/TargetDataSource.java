@@ -1,4 +1,4 @@
-package com.jamie.framework.datasource;
+package com.jamie.framework.datasource.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

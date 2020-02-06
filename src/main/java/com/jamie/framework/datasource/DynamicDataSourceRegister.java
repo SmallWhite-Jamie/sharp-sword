@@ -1,7 +1,6 @@
 package com.jamie.framework.datasource;
 
-import cn.hutool.core.util.ObjectUtil;
-import com.zaxxer.hikari.HikariConfig;
+import com.jamie.framework.datasource.properties.DataSourceProperties;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.MutablePropertyValues;
@@ -62,32 +61,23 @@ public class DynamicDataSourceRegister implements ImportBeanDefinitionRegistrar,
     private void initSlaveDataSources() {
         for (int i = 1; ; i++) {
             String name = "slave" + i;
-            Map map;
+            DataSourceProperties properties;
             try {
-                map = envBinder.bind("spring.datasource.dynamic." + name, Map.class).get();
+                properties = envBinder.bind("spring.datasource.dynamic." + name, DataSourceProperties.class).get();
             } catch (NoSuchElementException e) {
                 break;
             }
-            HikariDataSource hikariDataSource = buildHikariConfig(map);
+            HikariDataSource hikariDataSource = DynamicDataSourceFactory.buildHikariDataSource(properties);
             this.targetDataSources.put(name, hikariDataSource);
             DynamicDataSourceContextHolder.addDataSourceIds(name);
-            log.info("动态数据源，[{}]数据源初始化成功{}", name, map);
+            log.info("动态数据源，[{}]数据源初始化成功{} ", name, properties);
         }
     }
 
     private void initDefaultDataSource() {
-        Map map = envBinder.bind("spring.datasource.dynamic.master", Map.class).get();
-        this.defaultDataSource =  buildHikariConfig(map);
+        DataSourceProperties properties = envBinder.bind("spring.datasource.dynamic.master", DataSourceProperties.class).get();
+        this.defaultDataSource =  DynamicDataSourceFactory.buildHikariDataSource(properties);
         DynamicDataSourceContextHolder.addDataSourceIds(DynamicDataSourceContextHolder.DEF_KEY);
-        log.info("动态数据源，主数据源初始化成功{}", map);
-    }
-
-    private HikariDataSource buildHikariConfig(Map map) {
-        HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setUsername(ObjectUtil.toString(map.get("username")));
-        hikariConfig.setPassword(ObjectUtil.toString(map.get("password")));
-        hikariConfig.setJdbcUrl(ObjectUtil.toString(map.get("url")));
-        hikariConfig.setDriverClassName(ObjectUtil.toString(map.get("driver-class-name")));
-        return new HikariDataSource(hikariConfig);
+        log.info("动态数据源，主数据源初始化成功{} ", properties);
     }
 }

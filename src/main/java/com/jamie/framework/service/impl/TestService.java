@@ -1,7 +1,7 @@
 package com.jamie.framework.service.impl;
 
 import com.jamie.framework.bean.User;
-import com.jamie.framework.datasource.TargetDataSource;
+import com.jamie.framework.datasource.annotation.TargetDataSource;
 import com.jamie.framework.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

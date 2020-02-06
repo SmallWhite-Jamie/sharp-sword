@@ -5,7 +5,7 @@ import com.jamie.framework.bean.SysRoles;
 import com.jamie.framework.bean.SysUser;
 import com.jamie.framework.bean.User;
 import com.jamie.framework.bean.UserInfo;
-import com.jamie.framework.datasource.TargetDataSource;
+import com.jamie.framework.datasource.annotation.TargetDataSource;
 import com.jamie.framework.idgenerator.IdGenerator;
 import com.jamie.framework.mapper.UserMapper;
 import com.jamie.framework.service.PermissionService;
