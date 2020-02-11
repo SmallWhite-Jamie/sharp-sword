@@ -24,4 +24,6 @@ public class AppProperties {
      * 不拦截的URL
      */
     private String excludeUrls;
+
+    private String allowedOrigin;
 }
