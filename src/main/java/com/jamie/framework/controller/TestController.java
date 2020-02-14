@@ -5,6 +5,11 @@ import com.jamie.framework.accesslimit.annotation.RedisAccessLimit;
 import com.jamie.framework.bean.User;
 import com.jamie.framework.datasource.DynamicDataSourceContextHolder;
 import com.jamie.framework.lock.zookeeper.ZookeeperCuratorFactory;
+import com.jamie.framework.log.enumeration.ClientType;
+import com.jamie.framework.log.enumeration.OP;
+import com.jamie.framework.log.op.OpLog;
+import com.jamie.framework.log.op.OpLogWrite;
+import com.jamie.framework.redis.RedisService;
 import com.jamie.framework.service.UserServiceI;
 import com.jamie.framework.service.impl.TestService;
 import com.jamie.framework.util.api.ApiResult;
@@ -14,8 +19,13 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
+
+import java.util.Date;
+import java.util.concurrent.Callable;
 
 /**
  * @author lizheng
@@ -29,6 +39,64 @@ public class TestController {
 
     @Autowired
     private TestService testService;
+
+    @Autowired
+    private RedisService redisService;
+
+    @GetMapping("/redisServiceTest")
+    @OpLogWrite(moduleName = "测试", description = "测试redis序列化", clientType = ClientType.SERVICES, op = OP.QUERY)
+    public ApiResult redisServiceTest() {
+        OpLog log = new OpLog();
+        log.setClassMethod("classMethod");
+        log.setClientType(ClientType.PC);
+        log.setCrtTime(new Date());
+        log.setDescription(log.getDescription());
+        log.setMethod("get");
+        log.setModuleName("测试");
+        log.setOp(OP.ADD);
+        log.setUrl("0.0.0.0");
+        log.setUserId("admin");
+        redisService.set("test", log);
+        Object test = redisService.get("test");
+        return ApiResult.ok(test);
+    }
+
+    @OpLogWrite(moduleName = "测试", description = "测试DeferredResult", clientType = ClientType.PC)
+    @GetMapping("/deferredResult")
+    public DeferredResult<String> deferredResult() {
+        System.out.println("主线程开始了");
+        DeferredResult<String> deferredResult = new DeferredResult<>();
+        new Thread(() -> {
+            try {
+                System.out.println("内部线程开始了");
+                Thread.sleep(3000);
+                System.out.println("内部线程结束了");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            deferredResult.setResult("成功");
+        }).start();
+        System.out.println("wai部线程结束了");
+        return deferredResult;
+    }
+
+    @GetMapping("/callableTest")
+    public Callable<String> callableTest() {
+        System.out.println("wai部线程开始了");
+        Callable<String> callable = () -> {
+            try {
+                System.out.println("内部线程开始了");
+                Thread.sleep(3000);
+                System.out.println("内部线程结束了");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "Callable结束了";
+        };
+        System.out.println("wai部线程结束了");
+        return callable;
+
+    }
 
     @RequestMapping("test1")
     @ApiOperation(

@@ -39,10 +39,7 @@ spring:
       cluster-nodes: 192.168.74.131:9200
 logging:
   level:
-    com:
-      jamie:
-        framework:
-          mapper: debug
+    com.jamie.framework: debug
   path: D:\logs
 jobCron: 0/5 * * * * ? *
 # mybatis-plus

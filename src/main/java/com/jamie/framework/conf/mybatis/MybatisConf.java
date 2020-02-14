@@ -1,6 +1,9 @@
 package com.jamie.framework.conf.mybatis;
 
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.jamie.framework.idgenerator.IdGenerator;
+import com.jamie.framework.mybatis.CustomIdentifierGenerator;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,4 +20,16 @@ public class MybatisConf {
         // paginationInterceptor.setLimit(500);
         return paginationInterceptor;
     }
+
+    /**
+     * 配置ID生成器
+     * @param idGenerator
+     * @return
+     */
+    @Bean
+    public IdentifierGenerator identifierGenerator(IdGenerator idGenerator) {
+        return new CustomIdentifierGenerator(idGenerator);
+    }
+
+
 }
