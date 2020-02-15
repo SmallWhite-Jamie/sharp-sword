@@ -41,7 +41,6 @@ logging:
   level:
     com.jamie.framework: debug
   path: D:\logs
-jobCron: 0/5 * * * * ? *
 # mybatis-plus
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
@@ -53,6 +52,9 @@ app:
   key: APP1
   login-salt-timeout-seconds: 60
   exclude-urls: /instances,/actuator/**,/search/**,/test/**,/file/**
+  quartz:
+    cronMap:
+      com.jamie.framework.quartz.job.OpLogWriteQuartzJob: 0/5 * * * * ? *
 shiro:
   jwt:
     tokenName: X-TOKEN
