@@ -36,22 +36,22 @@ public class QuartzCronProperties {
     }
 
     static class Detail {
-        private long interval;
-        private long repeatCount;
+        private int interval;
+        private int repeatCount;
 
-        public long getInterval() {
+        public int getInterval() {
             return interval;
         }
 
-        public void setInterval(long interval) {
+        public void setInterval(int interval) {
             this.interval = interval;
         }
 
-        public long getRepeatCount() {
+        public int getRepeatCount() {
             return repeatCount;
         }
 
-        public void setRepeatCount(long repeatCount) {
+        public void setRepeatCount(int repeatCount) {
             this.repeatCount = repeatCount;
         }
     }

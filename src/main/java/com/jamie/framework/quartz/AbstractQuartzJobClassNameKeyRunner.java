@@ -1,5 +1,6 @@
 package com.jamie.framework.quartz;
 
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.Job;
 
 /**
@@ -20,9 +21,17 @@ public abstract class AbstractQuartzJobClassNameKeyRunner implements QuartzJobRu
         Class<? extends Job> cla = getJobClass();
         if (cla != null) {
             String group = getGroup();
-            String cron = properties.getCronMap().get(cla.getName());
-            String simpleName = getJobName();
-            quartzManager.addJob(cla, simpleName, group, cron);
+            String jobName = getJobName();
+            String key = cla.getName().replace(".", "_");
+            String cron = properties.getCronMap().get(key);
+            if (StringUtils.isNotBlank(cron)) {
+                quartzManager.addJob(cla, jobName, group, cron);
+            } else {
+                QuartzCronProperties.Detail detail = properties.getDetails().get(key);
+                if (detail != null) {
+                    quartzManager.addJob(cla, jobName, group, detail.getInterval(), detail.getRepeatCount());
+                }
+            }
         }
     }
 

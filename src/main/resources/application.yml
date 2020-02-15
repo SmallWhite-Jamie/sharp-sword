@@ -52,9 +52,13 @@ app:
   key: APP1
   login-salt-timeout-seconds: 60
   exclude-urls: /instances,/actuator/**,/search/**,/test/**,/file/**
-  quartz:
+  quartz: # cronMap 和 details 同时配置 cronMap 优先
     cronMap:
-      com.jamie.framework.quartz.job.OpLogWriteQuartzJob: 0/5 * * * * ? *
+      com_jamie_framework_quartz_job_OpLogWriteQuartzJob: 0/5 * * * * ? *
+    details:
+      com_jamie_framework_quartz_job_OpLogWriteQuartzJob: # QuartzCronProperties 注入时候 "." 分割无法注入(null)，所以使用"_" 下划线隔开包名
+        interval: 1
+        repeatCount: 3
 shiro:
   jwt:
     tokenName: X-TOKEN

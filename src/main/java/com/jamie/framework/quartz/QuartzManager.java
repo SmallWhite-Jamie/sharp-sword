@@ -106,10 +106,12 @@ public class QuartzManager {
 
     public void addJob(Class<? extends Job> jobClass, String jobName, String jobGroupName, int jobTime, int jobTimes) {
         try {
-            JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(jobName, jobGroupName)// 任务名称和组构成任务key
+            // 任务名称和组构成任务key
+            JobDetail jobDetail = JobBuilder.newJob(jobClass)
+                    .withIdentity(jobName, jobGroupName)
                     .build();
-// 使用simpleTrigger规则
-            Trigger trigger = null;
+            // 使用simpleTrigger规则
+            Trigger trigger;
             if (jobTimes < 0) {
                 trigger = TriggerBuilder.newTrigger().withIdentity(jobName, jobGroupName)
                         .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(1).withIntervalInSeconds(jobTime))
@@ -135,7 +137,7 @@ public class QuartzManager {
             CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
             trigger = trigger.getTriggerBuilder().withIdentity(triggerKey)
                     .withSchedule(CronScheduleBuilder.cronSchedule(jobTime)).build();
-// 重启触发器
+            // 重启触发器
             scheduler.rescheduleJob(triggerKey, trigger);
         } catch (SchedulerException e) {
             e.printStackTrace();
