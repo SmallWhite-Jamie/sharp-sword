@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author lizheng
@@ -27,6 +29,14 @@ public class RedisServiceImpl implements RedisService {
 
     @Autowired
     private AppProperties appProperties;
+
+    @Override
+    public void delKey(String ...keys) {
+        String prefix = appProperties.getKey() + ":";
+        // 此处必须Object接收 redisTemplate.delete(Collection<K> keys)
+        List<Object> collect = Stream.of(keys).map(prefix::concat).collect(Collectors.toList());
+        redisTemplate.delete(collect);
+    }
 
     @Override
     public void setStr(String key, String value) {
@@ -80,7 +90,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public List<String> getList(String key) {
+    public List<String> getStrList(String key) {
         return stringRedisTemplate.opsForList().range(appProperties.getKey() + ":" + key, 0, -1);
     }
 

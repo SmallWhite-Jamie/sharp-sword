@@ -8,6 +8,9 @@ import java.util.List;
  * @Description: RedisService
  */
 public interface RedisService {
+
+    void delKey(String ...key);
+
     /**
      * 设置字符串 k v
      * @param key
@@ -86,7 +89,7 @@ public interface RedisService {
      * @param key
      * @return
      */
-    List<String> getList(String key);
+    List<String> getStrList(String key);
 
     /**
      * 根据key获取Object类型的list

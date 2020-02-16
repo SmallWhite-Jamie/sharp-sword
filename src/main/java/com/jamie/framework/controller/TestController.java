@@ -7,7 +7,6 @@ import com.jamie.framework.datasource.DynamicDataSourceContextHolder;
 import com.jamie.framework.lock.zookeeper.ZookeeperCuratorFactory;
 import com.jamie.framework.log.enumeration.ClientType;
 import com.jamie.framework.log.enumeration.OP;
-import com.jamie.framework.log.op.OpLog;
 import com.jamie.framework.log.op.OpLogWrite;
 import com.jamie.framework.redis.RedisService;
 import com.jamie.framework.service.UserServiceI;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 
-import java.util.Date;
 import java.util.concurrent.Callable;
 
 /**
@@ -46,19 +44,7 @@ public class TestController {
     @GetMapping("/redisServiceTest")
     @OpLogWrite(moduleName = "测试", description = "测试redis序列化", clientType = ClientType.SERVICES, op = OP.QUERY)
     public ApiResult redisServiceTest() {
-        OpLog log = new OpLog();
-        log.setClassMethod("classMethod");
-        log.setClientType(ClientType.PC);
-        log.setCrtTime(new Date());
-        log.setDescription(log.getDescription());
-        log.setMethod("get");
-        log.setModuleName("测试");
-        log.setOp(OP.ADD);
-        log.setUrl("0.0.0.0");
-        log.setUserId("admin");
-        redisService.set("test", log);
-        Object test = redisService.get("test");
-        return ApiResult.ok(test);
+        return ApiResult.ok();
     }
 
     @OpLogWrite(moduleName = "测试", description = "测试DeferredResult", clientType = ClientType.PC)

@@ -47,6 +47,7 @@ mybatis-plus:
   type-handlers-package: com.jamie.framework.mybatis.handler
   global-config:
     banner: false
+  type-aliases-package: com.jamie.framework.mybatis.handler
 # 系统配置
 app:
   key: APP1
@@ -54,7 +55,7 @@ app:
   exclude-urls: /instances,/actuator/**,/search/**,/test/**,/file/**
   quartz: # cronMap 和 details 同时配置 cronMap 优先
     cronMap:
-      com_jamie_framework_quartz_job_OpLogWriteQuartzJob: 0/5 * * * * ? *
+      com_jamie_framework_quartz_job_OpLogWriteQuartzJob: 0/30 * * * * ? *
     details:
       com_jamie_framework_quartz_job_OpLogWriteQuartzJob: # QuartzCronProperties 注入时候 "." 分割无法注入(null)，所以使用"_" 下划线隔开包名
         interval: 1

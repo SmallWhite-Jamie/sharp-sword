@@ -1,5 +1,7 @@
 package com.jamie.framework.log.op;
 
+import com.jamie.framework.idgenerator.IdGenerator;
+import com.jamie.framework.log.enumeration.RequestMethod;
 import com.jamie.framework.redis.RedisService;
 import com.jamie.framework.service.impl.AppBaseService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +29,16 @@ import java.util.Date;
 @Order(101)
 public class OpLogWriteAspect {
 
-    private static final String REDIS_KEY = "OP_LOG_WRITE";
+    public static final String REDIS_KEY = "OP_LOG_WRITE";
 
     @Autowired
     private RedisService redisService;
 
     @Autowired
     private AppBaseService appBaseService;
+
+    @Autowired
+    private IdGenerator idGenerator;
 
 
     @Pointcut("@annotation(com.jamie.framework.log.op.OpLogWrite)")
@@ -48,15 +53,16 @@ public class OpLogWriteAspect {
             HttpServletRequest request = attributes.getRequest();
             String classMethod = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
             OpLog log = new OpLog();
+            log.setId(idGenerator.nextIdStr());
             log.setClassMethod(classMethod);
             log.setClientType(logWrite.clientType());
             log.setCrtTime(new Date());
-            log.setDescription(log.getDescription());
-            log.setMethod(request.getMethod());
+            log.setDescription(logWrite.description());
+            log.setMethod(RequestMethod.valueOf(request.getMethod().toUpperCase()));
             log.setModuleName(logWrite.moduleName());
             log.setOp(logWrite.op());
             log.setUrl(request.getRequestURI());
-            log.setUserId(appBaseService.getUserId());
+            // log.setUserId(appBaseService.getUserId());
             redisService.listRPush(REDIS_KEY, log);
         }
     }

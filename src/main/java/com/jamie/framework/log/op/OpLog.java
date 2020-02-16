@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.jamie.framework.log.enumeration.ClientType;
 import com.jamie.framework.log.enumeration.OP;
+import com.jamie.framework.log.enumeration.RequestMethod;
 import com.jamie.framework.mybatis.handler.EnumValueTypeHandler;
 import lombok.Data;
 
@@ -24,7 +25,8 @@ public class OpLog implements Serializable {
     private String id;
     private String userId;
     private String url;
-    private String method;
+    @TableField(value = "method", typeHandler = EnumValueTypeHandler.class)
+    private RequestMethod method;
     @TableField("class_method")
     private String classMethod;
     @TableField("module_name")

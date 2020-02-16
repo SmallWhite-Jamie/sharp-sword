@@ -36,6 +36,9 @@ public class QuartzJobRunnerInitiator implements ApplicationContextAware, Applic
             AnnotationAwareOrderComparator.sort(runners);
             for (Object runner : runners) {
                 ((QuartzJobRunner) runner).run(quartzManager);
+                if (log.isDebugEnabled()) {
+                    log.debug("初始化定时任务：{}",runner.getClass().getName());
+                }
             }
         }
         if (log.isDebugEnabled()) {
