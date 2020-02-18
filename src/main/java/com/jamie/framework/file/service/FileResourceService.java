@@ -1,6 +1,7 @@
 package com.jamie.framework.file.service;
 
 import com.jamie.framework.file.bean.SysResource;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -23,4 +24,11 @@ public interface FileResourceService {
      * @param resId
      */
     void download(String resId) throws IOException;
+
+    /**
+     * 上传文件
+     * @param file
+     * @return
+     */
+    SysResource upload(MultipartFile file) throws IOException;
 }

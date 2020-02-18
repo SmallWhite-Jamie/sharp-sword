@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -32,6 +33,13 @@ public class FileResourceController {
     public void download(@PathVariable String resId) throws IOException {
         fileResource.download(resId);
     }
+
+    @RequestMapping("upload")
+    public ApiResult upload(MultipartFile file) throws IOException {
+        SysResource resource = fileResource.upload(file);
+        return ApiResult.ok(resource);
+    }
+
 
 
 }

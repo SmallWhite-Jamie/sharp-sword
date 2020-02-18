@@ -16,6 +16,7 @@
 
 package com.jamie.framework.util.api;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,6 +48,7 @@ public class ApiResult<T> implements Serializable {
 
     private String msg;
 
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date time;
 
     public ApiResult() {

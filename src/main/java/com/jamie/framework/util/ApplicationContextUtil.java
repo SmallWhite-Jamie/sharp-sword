@@ -1,8 +1,12 @@
 package com.jamie.framework.util;
 
+import com.jamie.framework.conf.AppProperties;
+import com.jamie.framework.idgenerator.IdGenerator;
+import com.jamie.framework.service.impl.AppBaseService;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,4 +30,26 @@ public class ApplicationContextUtil implements ApplicationContextAware {
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ApplicationContextUtil.applicationContext = applicationContext;
     }
+
+    public static AppProperties getAppProperties() {
+        if (applicationContext == null) {
+            throw new ApplicationContextException("ApplicationContext 未初始化");
+        }
+        return ApplicationContextUtil.getBean(AppProperties.class);
+    }
+
+    public static AppBaseService getAppBaseService() {
+        if (applicationContext == null) {
+            throw new ApplicationContextException("ApplicationContext 未初始化");
+        }
+        return ApplicationContextUtil.getBean(AppBaseService.class);
+    }
+
+    public static IdGenerator getIdGenerator() {
+        if (applicationContext == null) {
+            throw new ApplicationContextException("ApplicationContext 未初始化");
+        }
+        return ApplicationContextUtil.getBean(IdGenerator.class);
+    }
+
 }

@@ -3,12 +3,16 @@ package com.jamie.framework.file.service.impl;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.http.ContentType;
+import cn.hutool.system.OsInfo;
 import com.alibaba.fastjson.JSON;
 import com.jamie.framework.conf.AppProperties;
 import com.jamie.framework.file.bean.SysResource;
 import com.jamie.framework.file.enumeration.StorageType;
 import com.jamie.framework.file.mapper.SysResourceMapper;
 import com.jamie.framework.file.service.FileResourceService;
+import com.jamie.framework.service.impl.AppBaseService;
+import com.jamie.framework.util.ApplicationContextUtil;
+import com.jamie.framework.util.DateTimeUtils;
 import com.jamie.framework.util.RegExpValidatorUtils;
 import com.jamie.framework.util.api.ApiResult;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +22,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * @author lizheng
@@ -38,6 +44,9 @@ public class FileResourceServiceImpl implements FileResourceService {
 
     @Autowired
     private AppProperties appProperties;
+
+    @Autowired
+    private AppBaseService baseService;
 
     @Override
     public SysResource getInfoById(String id) {
@@ -54,7 +63,7 @@ public class FileResourceServiceImpl implements FileResourceService {
             response.setCharacterEncoding("utf-8");
             response.setContentType(ContentType.MULTIPART.toString());
             String fileName = new String(resource.getName().getBytes(CharsetUtil.UTF_8), CharsetUtil.ISO_8859_1);
-            response.setHeader("Content-Disposition", "attachment;fileName=" + fileName + "." + resource.getSuffix());
+            response.setHeader("Content-Disposition", "attachment;fileName=" + fileName + resource.getSuffix());
             if (resource.getStorageType() == StorageType.NETWORK) {
                 String url = resource.getUrl();
                 if (StringUtils.isNotBlank(url) && RegExpValidatorUtils.isUrl(url)) {
@@ -91,5 +100,72 @@ public class FileResourceServiceImpl implements FileResourceService {
 
             }
         }
+    }
+
+    @Override
+    public SysResource upload(MultipartFile file) throws IOException {
+        if (!file.isEmpty()) {
+            String originalFilename = file.getOriginalFilename();
+            String newName = ApplicationContextUtil.getIdGenerator().nextIdStr();
+            StringBuilder builder = new StringBuilder();
+            // 系统配置路径
+            String filePath = ApplicationContextUtil.getAppProperties().getFilePath();
+            if (filePath == null) {
+                OsInfo osInfo = new OsInfo();
+                if (osInfo.isWindows()) {
+                    // Windows
+                    builder.append("C:");
+                    builder.append(File.separatorChar);
+                    builder.append("resource");
+                } else if (osInfo.isLinux()) {
+                    // linux
+                    builder.append("/data");
+                }
+            } else {
+                builder.append(filePath);
+            }
+            // 系统分隔符
+            builder.append(File.separatorChar);
+            // 当前日期文件夹
+            builder.append(DateTimeUtils.getDateStr());
+            File dir = new File(builder.toString());
+            if (!dir.exists()) {
+                if (!dir.mkdirs()) {
+                    log.error("文件夹创建失败");
+                    throw new RuntimeException("文件夹创建失败");
+                }
+            }
+            // 系统分隔符
+            builder.append(File.separatorChar);
+            // 文件夹
+            builder.append(newName);
+            String path =  builder.toString();
+            file.transferTo(new File(builder.toString()));
+            SysResource resource = new SysResource();
+            resource.setName(getFilename(originalFilename));
+            resource.setSize(file.getSize());
+            resource.setCrteater(baseService.getUserId());
+            resource.setSuffix(getSuffix(originalFilename));
+            resource.setStatus(1);
+            resource.setStorageType(StorageType.SERVER_PATH);
+            resource.setUpdateTime(new Date());
+            resource.setFilepath(path);
+            sysResourceMapper.insert(resource);
+            return resource;
+        }
+        return null;
+    }
+    private String getFilename(String originalFilename) {
+        if (StringUtils.isBlank(originalFilename)) {
+            return "";
+        }
+        return originalFilename.substring(0, originalFilename.lastIndexOf("."));
+    }
+
+    private String getSuffix(String originalFilename) {
+        if (StringUtils.isBlank(originalFilename)) {
+            return "";
+        }
+        return originalFilename.substring(originalFilename.lastIndexOf("."), originalFilename.length());
     }
 }
