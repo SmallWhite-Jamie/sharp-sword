@@ -1,8 +1,5 @@
 package com.jamie.framework.conf.webmvc;
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.jamie.framework.accesslimit.interceptor.AccessLimitInterceptor;
 import com.jamie.framework.conf.webmvc.converters.StringToDateConverter;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +10,6 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,19 +27,20 @@ public class AppWebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
-        FastJsonConfig fastJsonConfig = new FastJsonConfig();
-        fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat,
-                SerializerFeature.WriteNullStringAsEmpty,
-                SerializerFeature.WriteNullListAsEmpty,
-                SerializerFeature.WriteMapNullValue);
-        fastJsonConfig.setDateFormat("yyyy-MM-dd hh:mm:ss");
-        converter.setFastJsonConfig(fastJsonConfig);
-        // 设置默认的 Content-Type: application/json;charset=UTF-8
-        List<MediaType> mediaTypes = new ArrayList<>();
-        mediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
-        converter.setSupportedMediaTypes(mediaTypes);
-        converters.add(converter);
+//        当springboot版本是2.0.9以上配置fastjson 以下配置不生效，可以使用 @Bean HttpMessageConverters方式配置
+//        FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
+//        FastJsonConfig fastJsonConfig = new FastJsonConfig();
+//        fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat,
+//                SerializerFeature.WriteNullStringAsEmpty,
+//                SerializerFeature.WriteNullListAsEmpty,
+//                SerializerFeature.WriteMapNullValue);
+//        fastJsonConfig.setDateFormat("yyyy-MM-dd HH:mm:ss");
+//        converter.setFastJsonConfig(fastJsonConfig);
+//        // 设置默认的 Content-Type: application/json;charset=UTF-8
+//        List<MediaType> mediaTypes = new ArrayList<>();
+//        mediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
+//        converter.setSupportedMediaTypes(mediaTypes);
+//        converters.add(converter);
     }
 
     @Override

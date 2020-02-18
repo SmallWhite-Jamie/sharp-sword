@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 /**
  * @author lizheng
  * @date: 12:13 2020/02/02
@@ -24,6 +26,11 @@ public class FileResourceController {
     public ApiResult info(@PathVariable String id) {
         SysResource resource = fileResource.getInfoById(id);
         return ApiResult.ok(resource);
+    }
+
+    @RequestMapping("download/{resId}")
+    public void download(@PathVariable String resId) throws IOException {
+        fileResource.download(resId);
     }
 
 

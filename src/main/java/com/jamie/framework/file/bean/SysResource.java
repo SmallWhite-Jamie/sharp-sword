@@ -1,5 +1,6 @@
 package com.jamie.framework.file.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -32,6 +33,7 @@ public class SysResource {
     private int sort;
     private String crteater;
     @TableField("update_time")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
 }

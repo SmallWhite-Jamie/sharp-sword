@@ -25,5 +25,13 @@ public class AppProperties {
      */
     private String excludeUrls;
 
+    /**
+     * 允许跨域的域名
+     */
     private String allowedOrigin;
+
+    /**
+     * 文件路径
+     */
+    private String filePath;
 }
