@@ -23,10 +23,27 @@ public class FileResourceController {
     @Autowired
     private FileResourceService fileResource;
 
+    @RequestMapping("create")
+    public ApiResult create(SysResource resource) {
+        fileResource.create(resource);
+        return ApiResult.ok();
+    }
+
+    @RequestMapping("delete/{id}")
+    public ApiResult delete(@PathVariable String id) {
+        fileResource.delete(id);
+        return ApiResult.ok();
+    }
+
     @RequestMapping("info/{id}")
     public ApiResult info(@PathVariable String id) {
         SysResource resource = fileResource.getInfoById(id);
         return ApiResult.ok(resource);
+    }
+
+    @RequestMapping("downloadMultiThread/{resId}")
+    public void downloadMultiThread(@PathVariable String resId) {
+        fileResource.downloadMultiThread(resId);
     }
 
     @RequestMapping("download/{resId}")

@@ -31,4 +31,23 @@ public interface FileResourceService {
      * @return
      */
     SysResource upload(MultipartFile file) throws IOException;
+
+    /**
+     * 删除
+     * @param id
+     */
+    void delete(String id);
+
+    /**
+     * 创建一个资源信息
+     * @param resource
+     * @return
+     */
+    SysResource create(SysResource resource);
+
+    /**
+     * 断点续传的方式下载
+     * @param resId
+     */
+    void downloadMultiThread(String resId);
 }

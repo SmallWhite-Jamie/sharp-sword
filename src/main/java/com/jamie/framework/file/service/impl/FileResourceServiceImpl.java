@@ -103,6 +103,16 @@ public class FileResourceServiceImpl implements FileResourceService {
     }
 
     @Override
+    public void downloadMultiThread(String resId) {
+//        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+//        SysResource resource;
+//        if (requestAttributes == null || (resource = this.getInfoById(resId)) == null) {
+//            return;
+//        }
+//        requestAttributes.getRequest().getHeader("");
+    }
+
+    @Override
     public SysResource upload(MultipartFile file) throws IOException {
         if (!file.isEmpty()) {
             String originalFilename = file.getOriginalFilename();
@@ -155,6 +165,29 @@ public class FileResourceServiceImpl implements FileResourceService {
         }
         return null;
     }
+
+    @Override
+    public void delete(String id) {
+        SysResource resource = this.getInfoById(id);
+        if (resource != null && StringUtils.isNotBlank(resource.getFilepath())) {
+            File file = new File(resource.getFilepath());
+            if (file.exists()) {
+                if (file.delete()) {
+                    sysResourceMapper.deleteById(id);
+                }
+            }
+        }
+    }
+
+    @Override
+    public SysResource create(SysResource resource) {
+        resource.setStatus(1);
+        resource.setCrteater(baseService.getUserId());
+        resource.setUpdateTime(new Date());
+        sysResourceMapper.insert(resource);
+        return resource;
+    }
+
     private String getFilename(String originalFilename) {
         if (StringUtils.isBlank(originalFilename)) {
             return "";
