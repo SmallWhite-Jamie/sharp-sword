@@ -3,7 +3,7 @@
 **特性和功能**：
 
 - 基于springboot 易于使用，快速，后期扩展容易
-- 模块化开发、发布、测试 **sharp-sword-run** 项目入口，**sharp-sword-core** 核心模块，可以新建业务模块集成父工程
+- 模块化开发、发布、测试 **sharp-sword-run** 项目入口，**sharp-sword-core** 核心模块，可以新建业务模块集成父工程，包名必须以**com.jamie.framework**为父包
 - 集成Javaweb开发常用的第三方框架和工具，功能丰富
 - 前后端分离，专注于后端服务，json api接口传输数据
 - 集成mybatis数据库框架，方便操作sql
