@@ -47,6 +47,8 @@ public class ApiResult<T> implements Serializable {
     private T data;
 
     private String msg;
+    
+    private long totalTime;
 
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date time;

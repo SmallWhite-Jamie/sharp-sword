@@ -1,5 +1,6 @@
 package com.jamie.framework.log.sys;
 
+import com.jamie.framework.util.api.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -45,7 +46,12 @@ public class SysLogAspect {
         }
         long start = System.currentTimeMillis();
         Object obj = joinPoint.proceed();
-        log.info("Request time: {} Millis", System.currentTimeMillis() - start);
+        // 计算请求耗时
+        long totalTime = System.currentTimeMillis() - start;
+        if (obj instanceof ApiResult) {
+            ((ApiResult) obj).setTotalTime(totalTime);
+        }
+        log.info("Request time: {} Millis", totalTime);
         return obj;
     }
 }
