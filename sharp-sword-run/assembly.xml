@@ -11,7 +11,7 @@
     <includeBaseDirectory>true</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>bin</directory> <!--需要打包的目录 -->
+            <directory>script</directory> <!--需要打包的目录 -->
             <outputDirectory>/</outputDirectory> <!-- 打包后输出的路径 -->
         </fileSet>
 
