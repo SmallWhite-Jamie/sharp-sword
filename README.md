@@ -16,6 +16,7 @@
 - 使用lombok注解生成Java Bean等工具
 - 提供全局的文件资源上传下载以及断点续传
 - 集成redis分布式锁和zookeeper分布式锁的实现
+- 使用easyexcel(阿里基于poi开发)快速、简单避免OOM的java处理Excel工具
 - 提供全局的接口返回规范和异常处理
 - 集成spring boot admin，全局实时检测项目运行情况
 - 集成swagger2接口文档
