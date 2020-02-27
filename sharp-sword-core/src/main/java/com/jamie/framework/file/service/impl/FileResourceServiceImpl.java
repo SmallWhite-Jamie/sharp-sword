@@ -54,7 +54,7 @@ public class FileResourceServiceImpl implements FileResourceService {
     }
 
     @Override
-    public void download(String resId) throws IOException {
+    public void download(String resId) throws Exception {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         HttpServletResponse response;
         if (requestAttributes != null && (response = ((ServletRequestAttributes) requestAttributes).getResponse()) != null) {
@@ -88,7 +88,7 @@ public class FileResourceServiceImpl implements FileResourceService {
                         response.setContentType(ContentType.JSON.toString());
                         response.setHeader("Content-Disposition", "");
                         if (outputStream != null) {
-                            outputStream.write(JSON.toJSONString(ApiResult.fail("下载失败")).getBytes());
+                            outputStream.write(JSON.toJSONString(ApiResult.fail("下载失败")).getBytes("UTF-8"));
                             outputStream.flush();
                         }
                         log.error("文件下载失败", e);

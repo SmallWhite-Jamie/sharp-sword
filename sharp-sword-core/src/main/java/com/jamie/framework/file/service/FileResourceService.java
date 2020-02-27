@@ -23,7 +23,7 @@ public interface FileResourceService {
      * 根据资源ID下载
      * @param resId
      */
-    void download(String resId) throws IOException;
+    void download(String resId) throws Exception;
 
     /**
      * 上传文件

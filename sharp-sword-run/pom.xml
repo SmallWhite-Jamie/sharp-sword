@@ -17,6 +17,12 @@
             <artifactId>sharp-sword-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!--需要邮件服务时，加入依赖即可，使用 AppMailSender 发送邮件-->
+        <!--<dependency>-->
+            <!--<groupId>com.jamie.framework</groupId>-->
+            <!--<artifactId>sharp-sword-mail</artifactId>-->
+            <!--<version>1.0-SNAPSHOT</version>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>

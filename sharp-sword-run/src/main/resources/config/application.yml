@@ -41,6 +41,11 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
+  mail:
+    host: mail.test.com
+#    username: test1
+#    password: test1
+    port: 25
 logging:
   level:
     com.jamie.framework: debug

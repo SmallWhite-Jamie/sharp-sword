@@ -47,7 +47,7 @@ public class FileResourceController {
     }
 
     @RequestMapping("download/{resId}")
-    public void download(@PathVariable String resId) throws IOException {
+    public void download(@PathVariable String resId) throws Exception {
         fileResource.download(resId);
     }
 
