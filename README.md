@@ -24,6 +24,8 @@
 
 待完善。。。
 
+## 启动方式
+
 **开发启动方式**
 
 运行 **sharp-sword-run** 工程中 **ApplicationRun** 的 main 方法
@@ -33,3 +35,6 @@
 1. 加载项目来依赖后，运行 mvn clean install
 
 2. 在 sharp-sword-run\target 目录下会生成打包好的项目文件 **sharp-sword.tar.gz** 和 **sharp-sword.zip** 解压缩后运行 start.sh [start|stop|restart|status]
+
+## License
+[Apache License 2.0](http://www.apache.org/licenses/)
