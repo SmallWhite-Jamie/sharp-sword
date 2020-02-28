@@ -26,6 +26,7 @@
 		<module>sharp-sword-core</module>
         <module>sharp-sword-run</module>
         <module>sharp-sword-mail</module>
+        <module>sharp-sword-code-generator</module>
     </modules>
 
     <dependencyManagement>
