@@ -11,6 +11,7 @@ import com.jamie.framework.mapper.UserMapper;
 import com.jamie.framework.service.PermissionService;
 import com.jamie.framework.service.UserServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserServiceI {
     @Autowired
     private PermissionService permissionService;
 
-//    @Cacheable(value = "user", key = "'User:'+#id")
+    @Cacheable(value = "user", key = "'User:'+#id")
     @Override
     public User getUserById(String id) {
         User user = userMapper.findById(id);

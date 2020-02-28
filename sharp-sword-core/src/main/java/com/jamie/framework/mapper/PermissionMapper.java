@@ -12,5 +12,6 @@ import java.util.List;
  */
 public interface PermissionMapper {
     List<SysPermission> getPermissionByUserId(String id);
+
     List<SysRoles> getRolesByUserId(String id);
 }

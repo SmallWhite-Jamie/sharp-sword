@@ -12,6 +12,7 @@ import com.jamie.framework.jwt.JWTUtil;
 import com.jamie.framework.jwt.JwtProperties;
 import com.jamie.framework.jwt.VerifyResult;
 import com.jamie.framework.mapper.SysUserMapper;
+import com.jamie.framework.redis.RedisService;
 import com.jamie.framework.service.LoginService;
 import com.jamie.framework.service.PermissionService;
 import com.jamie.framework.util.api.ApiCode;
@@ -21,9 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -47,16 +44,13 @@ public class LoginServiceImpl implements LoginService {
     private JwtProperties jwtProperties;
 
     @Autowired
+    private AppProperties appProperties;
+
+    @Autowired
     private SysUserMapper userMapper;
 
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
-
-    @Autowired
-    private RedisTemplate redisTemplate;
-
-    @Autowired
-    private AppProperties appProperties;
+    private RedisService redisService;
 
     @Autowired
     private IdGenerator idGenerator;
@@ -64,11 +58,10 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private PermissionService permissionService;
 
-    @SuppressWarnings("unchecked")
     @Override
     public ApiResult login(String userid, String pw, HttpServletResponse httpServletResponse) {
         // 获取rdis中用户登录时的salt值
-        String salt = stringRedisTemplate.opsForValue().get(RedisConstant.RANDOM_SALT_KEY + ":" + appProperties.getKey() + userid);
+        String salt = redisService.getStr(RedisConstant.RANDOM_SALT_KEY + userid);
         if (StringUtils.isBlank(salt)) {
             log.info("无法获取用户[{}]登录对应的 salt 值.", userid);
             return ApiResult.fail(ApiCode.LOGIN_EXCEPTION, "无法获取登录对应的 salt 值");
@@ -97,17 +90,15 @@ public class LoginServiceImpl implements LoginService {
             // 保存用户信息到redis
             sysUser.setPassword(null);
             sysUser.setPwHash(null);
-            String key = RedisConstant.USER_INFO_KEY + appProperties.getKey() + userid;
-            String tokenKey = RedisConstant.USER_TOKEN_KEY + appProperties.getKey() + userid;
-            redisTemplate.opsForValue().set(key, sysUser, jwtProperties.getExpireSecond(), TimeUnit.SECONDS);
-            redisTemplate.opsForValue().set(tokenKey, token, jwtProperties.getExpireSecond(), TimeUnit.SECONDS);
+            redisService.setObj(RedisConstant.USER_INFO_KEY + userid, sysUser, jwtProperties.getExpireSecond());
+            redisService.setObj(RedisConstant.USER_TOKEN_KEY + userid, token, jwtProperties.getExpireSecond());
 
             // 更新角色相关信息
-            redisTemplate.delete(RedisConstant.USER_ROLE_KEY + appProperties.getKey() + userid);
+            redisService.delKey(RedisConstant.USER_ROLE_KEY + userid);
             List<SysRoles> sysRoles = permissionService.getRolesByUserId(userid);
             log.info("sysRoles: {}", sysRoles.toString());
             // 更新权限相关信息
-            redisTemplate.delete(RedisConstant.USER_PERMISSION_KEY + appProperties.getKey() + userid);
+            redisService.delKey(RedisConstant.USER_PERMISSION_KEY + userid);
             List<SysPermission> sysPermissions = permissionService.getSysPermissionByUserId(userid);
             log.info("sysPermissions: {}", sysPermissions.toString());
             Map<String, Object> data = new HashMap<>(2);
@@ -124,9 +115,8 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String getLoginRandomSalt(String userid) {
-        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
         String str = idGenerator.nextIdStr();
-        operations.set(RedisConstant.RANDOM_SALT_KEY + ":" + appProperties.getKey() + userid, str, appProperties.getLoginSaltTimeoutSeconds(), TimeUnit.SECONDS);
+        redisService.set(RedisConstant.RANDOM_SALT_KEY + userid, str, appProperties.getLoginSaltTimeoutSeconds());
         return str;
     }
 
@@ -137,13 +127,13 @@ public class LoginServiceImpl implements LoginService {
             if (VerifyResult.SUCCESS == JWTUtil.verifyToken(token, null)) {
                 // 清理redis用户信息
                 String userId = JWTUtil.getJwtUsername(token);
-                String redisToken = (String) redisTemplate.opsForValue().get(RedisConstant.USER_TOKEN_KEY + appProperties.getKey() + userId);
+                String redisToken = redisService.getStr(RedisConstant.USER_TOKEN_KEY + userId);
                 if (token.equals(redisToken)) {
-                    redisTemplate.delete(RedisConstant.USER_INFO_KEY + appProperties.getKey() + userId);
-                    redisTemplate.delete(RedisConstant.RANDOM_SALT_KEY + appProperties.getKey() + userId);
-                    redisTemplate.delete(RedisConstant.USER_ROLE_KEY + appProperties.getKey() + userId);
-                    redisTemplate.delete(RedisConstant.USER_PERMISSION_KEY + appProperties.getKey() + userId);
-                    redisTemplate.delete(RedisConstant.USER_TOKEN_KEY + appProperties.getKey() + userId);
+                    redisService.delKey(RedisConstant.USER_INFO_KEY + userId,
+                            RedisConstant.RANDOM_SALT_KEY + userId,
+                            RedisConstant.USER_ROLE_KEY + userId,
+                            RedisConstant.USER_PERMISSION_KEY + userId,
+                            RedisConstant.USER_TOKEN_KEY + userId);
                     // 清空cookies
                     CookieUtil.delCookie(req, res, jwtProperties.getTokenName());
                 }

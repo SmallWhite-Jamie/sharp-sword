@@ -2,6 +2,7 @@ package com.jamie.framework.conf.shiro;
 
 import com.jamie.framework.conf.AppProperties;
 import com.jamie.framework.jwt.JwtProperties;
+import com.jamie.framework.redis.RedisService;
 import com.jamie.framework.shiro.filter.JWTFilter;
 import com.jamie.framework.shiro.realm.JWTRealm;
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +34,10 @@ import java.util.Map;
 public class ShiroConfig {
 
     @Bean
-    public SecurityManager securityManager() {
+    public SecurityManager securityManager(JWTRealm jwtRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         // 设置 realm
-        securityManager.setRealm(jwtRealm());
+        securityManager.setRealm(jwtRealm);
 
         //禁用sessionStorage
         DefaultSubjectDAO subjectDAO = (DefaultSubjectDAO) securityManager.getSubjectDAO();
@@ -54,18 +55,21 @@ public class ShiroConfig {
     }
 
     @Bean
-    public JWTRealm jwtRealm() {
-        return new JWTRealm();
+    public JWTRealm jwtRealm(RedisService redisService) {
+        return new JWTRealm(redisService);
     }
 
     @Bean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager, AppProperties appProperties, JwtProperties jwtProperties) {
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager,
+                                                         AppProperties appProperties,
+                                                         JwtProperties jwtProperties,
+                                                         RedisService redisService) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
         // 设置 securityManager 安全管理器
         factoryBean.setSecurityManager(securityManager);
         // 添加jwtFilter
         Map<String, Filter> stringFilterMap = factoryBean.getFilters();
-        stringFilterMap.put("jwtFilter", new JWTFilter(jwtProperties));
+        stringFilterMap.put("jwtFilter", new JWTFilter(jwtProperties, redisService));
 //        stringFilterMap.put("logoutFilter", new LogoutFilter());
         // 设置无权限时跳转
         factoryBean.setUnauthorizedUrl("403");
@@ -119,9 +123,9 @@ public class ShiroConfig {
     }
 
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
-        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager());
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
 

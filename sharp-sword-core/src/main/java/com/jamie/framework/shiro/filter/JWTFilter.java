@@ -1,13 +1,12 @@
 package com.jamie.framework.shiro.filter;
 
 import com.alibaba.fastjson.JSONObject;
-import com.jamie.framework.conf.AppProperties;
 import com.jamie.framework.constant.AppConstant;
 import com.jamie.framework.constant.RedisConstant;
 import com.jamie.framework.jwt.JWTUtil;
 import com.jamie.framework.jwt.JwtProperties;
 import com.jamie.framework.jwt.JwtToken;
-import com.jamie.framework.util.ApplicationContextUtil;
+import com.jamie.framework.redis.RedisService;
 import com.jamie.framework.util.api.ApiCode;
 import com.jamie.framework.util.api.ApiResult;
 import com.jamie.framework.util.http.CookieUtil;
@@ -18,14 +17,12 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.util.WebUtils;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author lizheng
@@ -37,8 +34,11 @@ public class JWTFilter extends AuthenticatingFilter {
 
     private JwtProperties jwtProperties;
 
-    public JWTFilter(JwtProperties jwtProperties) {
+    private RedisService redisService;
+
+    public JWTFilter(JwtProperties jwtProperties, RedisService redisService) {
         this.jwtProperties = jwtProperties;
+        this.redisService = redisService;
     }
 
     /**
@@ -108,7 +108,6 @@ public class JWTFilter extends AuthenticatingFilter {
      * @return
      * @throws Exception
      */
-    @SuppressWarnings("unchecked")
     @Override
     protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) throws Exception {
         JwtToken jwtToken = (JwtToken) token;
@@ -124,12 +123,10 @@ public class JWTFilter extends AuthenticatingFilter {
             httpServletResponse.setHeader(AppConstant.TOKEN_REFRESH, "OK");
 
             // 刷新redis
-            RedisTemplate redisTemplate = (RedisTemplate) ApplicationContextUtil.getBean("redisTemplate");
-            String appKey = ApplicationContextUtil.getBean(AppProperties.class).getKey();
-            redisTemplate.expire(RedisConstant.USER_INFO_KEY + appKey + userId, jwtProperties.getExpireSecond(), TimeUnit.SECONDS);
-            redisTemplate.opsForValue().set(RedisConstant.USER_TOKEN_KEY + appKey + userId, newToken, jwtProperties.getExpireSecond(), TimeUnit.SECONDS);
-            redisTemplate.expire(RedisConstant.USER_ROLE_KEY + appKey + userId, jwtProperties.getExpireSecond(), TimeUnit.SECONDS);
-            redisTemplate.expire(RedisConstant.USER_PERMISSION_KEY + appKey + userId, jwtProperties.getExpireSecond(), TimeUnit.SECONDS);
+            redisService.expireSeconds(RedisConstant.USER_INFO_KEY + userId, jwtProperties.getExpireSecond());
+            redisService.set(RedisConstant.USER_TOKEN_KEY + userId, newToken, jwtProperties.getExpireSecond());
+            redisService.expireSeconds(RedisConstant.USER_ROLE_KEY + userId, jwtProperties.getExpireSecond());
+            redisService.expireSeconds(RedisConstant.USER_PERMISSION_KEY  + userId, jwtProperties.getExpireSecond());
         }
         return true;
     }

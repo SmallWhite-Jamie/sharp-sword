@@ -18,8 +18,11 @@ import java.util.stream.Stream;
  * @date: 21:13 2020/02/13
  * @Description: RedisServiceImpl
  */
-@Service
+@Service("redisService")
 public class RedisServiceImpl implements RedisService {
+    public RedisServiceImpl() {
+        System.out.println("RedisServiceImpl");
+    }
 
     @Resource
     private RedisTemplate<Object, Object> redisTemplate;
@@ -39,6 +42,11 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
+    public void delKey(Object ...keys) {
+        redisTemplate.delete(keys);
+    }
+
+    @Override
     public void setStr(String key, String value) {
         stringRedisTemplate.opsForValue().set(appProperties.getKey() + ":" + key, value);
     }
@@ -49,23 +57,27 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void setObj(String key, String value) {
+    public void setObj(String key, Object value) {
         this.set(key, value);
     }
 
     @Override
-    public void setObj(String key, String value, long second) {
+    public void setObj(String key, Object value, long second) {
         this.set(key, value, second);
     }
 
     @Override
     public void set(Object key, Object value) {
-        redisTemplate.opsForValue().set(appProperties.getKey() + ":" + key, value);
+        redisTemplate.opsForValue().set(key, value);
     }
 
     @Override
     public void set(Object key, Object value, long second) {
-        redisTemplate.opsForValue().set(appProperties.getKey() + ":" + key, value, second, TimeUnit.SECONDS);
+        if (key instanceof String) {
+            redisTemplate.opsForValue().set(appProperties.getKey() + ":" + key, value, second, TimeUnit.SECONDS);
+        } else {
+            redisTemplate.opsForValue().set(key, value, second, TimeUnit.SECONDS);
+        }
     }
 
     @Override
@@ -74,18 +86,22 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public Object getObj(String key) {
-        return redisTemplate.opsForValue().get(appProperties.getKey() + ":" + key);
+    public Object getObj(Object key) {
+        if (key instanceof String) {
+            key = appProperties.getKey() + ":" + key;
+        }
+        return redisTemplate.opsForValue().get(key);
     }
 
-    @Override
-    public Object get(Object key) {
-        return redisTemplate.opsForValue().get(appProperties.getKey() + ":" + key);
-    }
 
     @Override
     public boolean hasKey(Object key) {
-        Boolean hasKey = redisTemplate.hasKey(appProperties.getKey() + ":" + key);
+        Boolean hasKey;
+        if (key instanceof String) {
+            hasKey = redisTemplate.hasKey(appProperties.getKey() + ":" + key);
+        } else {
+            hasKey = redisTemplate.hasKey(key);
+        }
         return hasKey == null ? false : hasKey;
     }
 
@@ -96,7 +112,7 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public List<Object> getList(Object key) {
-        return redisTemplate.opsForList().range(appProperties.getKey() + ":" + key, 0, -1);
+        return redisTemplate.opsForList().range(key, 0, -1);
     }
 
     @Override
@@ -111,12 +127,26 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void listLPush(Object key, Object... value) {
-        redisTemplate.opsForList().leftPushAll(appProperties.getKey() + ":" + key, value);
+        redisTemplate.opsForList().leftPushAll(key, value);
     }
 
     @Override
     public void listRPush(Object key, Object... value) {
-        redisTemplate.opsForList().rightPushAll(appProperties.getKey() + ":" + key, value);
+        redisTemplate.opsForList().rightPushAll(key, value);
+    }
+
+    @Override
+    public void expireSeconds(Object key, int expireSecond) {
+        this.expire(key, expireSecond, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void expire(Object key, int expireSecond, TimeUnit timeUnit) {
+        if (key instanceof String) {
+            redisTemplate.expire(appProperties.getKey() + ":" + key, expireSecond, timeUnit);
+        } else {
+            redisTemplate.expire(key, expireSecond, timeUnit);
+        }
     }
 
 

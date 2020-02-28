@@ -2,11 +2,11 @@ package com.jamie.framework.shiro.realm;
 
 import com.jamie.framework.bean.SysPermission;
 import com.jamie.framework.bean.SysRoles;
-import com.jamie.framework.conf.AppProperties;
 import com.jamie.framework.constant.RedisConstant;
 import com.jamie.framework.jwt.JWTUtil;
 import com.jamie.framework.jwt.JwtToken;
 import com.jamie.framework.jwt.VerifyResult;
+import com.jamie.framework.redis.RedisService;
 import com.jamie.framework.service.PermissionService;
 import com.jamie.framework.util.ApplicationContextUtil;
 import org.apache.commons.collections.CollectionUtils;
@@ -19,7 +19,6 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.List;
 import java.util.Set;
@@ -31,6 +30,13 @@ import java.util.stream.Collectors;
  * @Description: JWTRealm
  */
 public class JWTRealm extends AuthorizingRealm {
+
+    private RedisService redisService;
+
+    public JWTRealm(RedisService redisService) {
+        this.redisService = redisService;
+    }
+
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -85,10 +91,8 @@ public class JWTRealm extends AuthorizingRealm {
             throw new AuthenticationException(VerifyResult.FAILURE.toString());
         }
         // 验证redis登录信息
-        AppProperties appProperties = ApplicationContextUtil.getBean(AppProperties.class);
-        RedisTemplate redisTemplate = (RedisTemplate) ApplicationContextUtil.getBean("redisTemplate");
-        String key = RedisConstant.USER_INFO_KEY + appProperties.getKey() + JWTUtil.getJwtUsername(jwtToken.getToken());
-        Boolean hasKey = redisTemplate.hasKey(key);
+        String key = RedisConstant.USER_INFO_KEY + JWTUtil.getJwtUsername(jwtToken.getToken());
+        Boolean hasKey = redisService.hasKey(key);
         if (!hasKey) {
             throw new AuthenticationException("非法token, 用户已经退出");
         }
