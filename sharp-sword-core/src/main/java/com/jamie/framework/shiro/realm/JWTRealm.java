@@ -91,10 +91,10 @@ public class JWTRealm extends AuthorizingRealm {
             throw new AuthenticationException(VerifyResult.FAILURE.toString());
         }
         // 验证redis登录信息
-        String key = RedisConstant.USER_INFO_KEY + JWTUtil.getJwtUsername(jwtToken.getToken());
-        Boolean hasKey = redisService.hasKey(key);
-        if (!hasKey) {
-            throw new AuthenticationException("非法token, 用户已经退出");
+        String key = RedisConstant.USER_TOKEN_KEY + JWTUtil.getJwtUsername(jwtToken.getToken());
+        String serviceToken = redisService.getStr(key);
+        if (!jwtToken.getToken().equals(serviceToken)) {
+            throw new AuthenticationException("用户信息认证失败");
         }
         return new SimpleAuthenticationInfo(jwtToken.getToken(), jwtToken.getToken(), getName());
     }

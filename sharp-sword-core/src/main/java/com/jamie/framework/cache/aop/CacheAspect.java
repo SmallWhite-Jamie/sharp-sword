@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.lang.reflect.Parameter;
-
 /**
  * <p>CacheAspect</p>
  *
@@ -49,7 +47,9 @@ public class CacheAspect {
         // 检查redis中是否存在 key
         boolean hasKey;
         if (StringUtils.isNotBlank(cacheable.prefix())) {
-            hasKey = redisService.hasKey(cacheable.prefix() + key.toString());
+            // key 加上前缀
+            key = cacheable.prefix() + key.toString();
+            hasKey = redisService.hasKey(key);
         } else {
             hasKey = redisService.hasKey(key);
         }
@@ -76,11 +76,12 @@ public class CacheAspect {
     }
 
     private Object getKeyFromParams(String key, JoinPoint joinPoint) {
+        key = key.substring(1, key.length());
         Object[] args = joinPoint.getArgs();
-        Parameter[] parameters = ((MethodSignature) joinPoint.getSignature()).getMethod().getParameters();
+        String[] parameters = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
         if (parameters != null && parameters.length > 0) {
             for (int i = 0; i < parameters.length; i++) {
-                if (key.equals(parameters[i].getName())) {
+                if (key.equals(parameters[i])) {
                     return args[i];
                 }
             }

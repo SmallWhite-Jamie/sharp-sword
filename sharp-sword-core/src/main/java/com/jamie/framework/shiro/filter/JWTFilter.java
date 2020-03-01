@@ -124,7 +124,7 @@ public class JWTFilter extends AuthenticatingFilter {
 
             // 刷新redis
             redisService.expireSeconds(RedisConstant.USER_INFO_KEY + userId, jwtProperties.getExpireSecond());
-            redisService.set(RedisConstant.USER_TOKEN_KEY + userId, newToken, jwtProperties.getExpireSecond());
+            redisService.setStr(RedisConstant.USER_TOKEN_KEY + userId, newToken, jwtProperties.getExpireSecond());
             redisService.expireSeconds(RedisConstant.USER_ROLE_KEY + userId, jwtProperties.getExpireSecond());
             redisService.expireSeconds(RedisConstant.USER_PERMISSION_KEY  + userId, jwtProperties.getExpireSecond());
         }

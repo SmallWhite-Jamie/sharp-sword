@@ -10,7 +10,6 @@ import com.jamie.framework.constant.RedisConstant;
 import com.jamie.framework.idgenerator.IdGenerator;
 import com.jamie.framework.jwt.JWTUtil;
 import com.jamie.framework.jwt.JwtProperties;
-import com.jamie.framework.jwt.VerifyResult;
 import com.jamie.framework.mapper.SysUserMapper;
 import com.jamie.framework.redis.RedisService;
 import com.jamie.framework.service.LoginService;
@@ -85,13 +84,13 @@ public class LoginServiceImpl implements LoginService {
             }
             CookieUtil.set(httpServletResponse, AppConstant.TOKEN_NAME_KEY, tokenName, -1, "/");
             CookieUtil.set(httpServletResponse, tokenName, token, -1, "/");
-            httpServletResponse.setHeader(AppConstant.TOKEN_NAME_KEY, token);
+            httpServletResponse.setHeader(AppConstant.TOKEN_NAME_KEY, tokenName);
             httpServletResponse.setHeader(tokenName, token);
             // 保存用户信息到redis
             sysUser.setPassword(null);
             sysUser.setPwHash(null);
             redisService.setObj(RedisConstant.USER_INFO_KEY + userid, sysUser, jwtProperties.getExpireSecond());
-            redisService.setObj(RedisConstant.USER_TOKEN_KEY + userid, token, jwtProperties.getExpireSecond());
+            redisService.setStr(RedisConstant.USER_TOKEN_KEY + userid, token, jwtProperties.getExpireSecond());
 
             // 更新角色相关信息
             redisService.delKey(RedisConstant.USER_ROLE_KEY + userid);
@@ -116,28 +115,36 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String getLoginRandomSalt(String userid) {
         String str = idGenerator.nextIdStr();
-        redisService.set(RedisConstant.RANDOM_SALT_KEY + userid, str, appProperties.getLoginSaltTimeoutSeconds());
+        redisService.setStr(RedisConstant.RANDOM_SALT_KEY + userid, str, appProperties.getLoginSaltTimeoutSeconds());
         return str;
     }
 
     @Override
     public void logout(HttpServletRequest req, HttpServletResponse res) {
-        String token = JWTUtil.getTokenFromRequest(req);
-        if (StringUtils.isNotBlank(token)) {
-            if (VerifyResult.SUCCESS == JWTUtil.verifyToken(token, null)) {
-                // 清理redis用户信息
-                String userId = JWTUtil.getJwtUsername(token);
-                String redisToken = redisService.getStr(RedisConstant.USER_TOKEN_KEY + userId);
-                if (token.equals(redisToken)) {
-                    redisService.delKey(RedisConstant.USER_INFO_KEY + userId,
-                            RedisConstant.RANDOM_SALT_KEY + userId,
-                            RedisConstant.USER_ROLE_KEY + userId,
-                            RedisConstant.USER_PERMISSION_KEY + userId,
-                            RedisConstant.USER_TOKEN_KEY + userId);
-                    // 清空cookies
-                    CookieUtil.delCookie(req, res, jwtProperties.getTokenName());
-                }
-            }
-        }
+        String userId = JWTUtil.getJwtUsername(JWTUtil.getTokenFromRequest(req));
+        redisService.delKey(RedisConstant.USER_INFO_KEY + userId,
+                RedisConstant.RANDOM_SALT_KEY + userId,
+                RedisConstant.USER_ROLE_KEY + userId,
+                RedisConstant.USER_PERMISSION_KEY + userId,
+                RedisConstant.USER_TOKEN_KEY + userId);
+
+//        JWTRealm 里面已经做过验证了，存储不需要再验证token合法性
+//        String token = JWTUtil.getTokenFromRequest(req);
+//        if (StringUtils.isNotBlank(token)) {
+//            if (VerifyResult.SUCCESS == JWTUtil.verifyToken(token, null)) {
+//                // 清理redis用户信息
+//                String userId = JWTUtil.getJwtUsername(token);
+//                String redisToken = redisService.getStr(RedisConstant.USER_TOKEN_KEY + userId);
+//                if (token.equals(redisToken)) {
+//                    redisService.delKey(RedisConstant.USER_INFO_KEY + userId,
+//                            RedisConstant.RANDOM_SALT_KEY + userId,
+//                            RedisConstant.USER_ROLE_KEY + userId,
+//                            RedisConstant.USER_PERMISSION_KEY + userId,
+//                            RedisConstant.USER_TOKEN_KEY + userId);
+//                    // 清空cookies
+//                    CookieUtil.delCookie(req, res, jwtProperties.getTokenName());
+//                }
+//            }
+//        }
     }
 }

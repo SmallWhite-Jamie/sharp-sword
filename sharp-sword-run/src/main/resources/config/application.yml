@@ -76,7 +76,7 @@ shiro:
     issuer: lz
     subject: test
     expire-second: 3600
-    refresh-token-interval: 30 #值越小，刷新率越高；当前时间 + (超时时间 - 刷新时间) > 过期时间(未来某个时间点) 则刷新token
+    refresh-token-interval: 60 #值越小，刷新率越高；当前时间 + (超时时间 - 刷新时间) > 过期时间(未来某个时间点) 则刷新token
     single-login: true
 zookeeper:
   connect-addr: 192.168.74.128:2181
