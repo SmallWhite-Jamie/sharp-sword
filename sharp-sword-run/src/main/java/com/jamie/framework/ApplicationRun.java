@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 /**
  * @author jamie.li
  */
-@SpringBootApplication(exclude = { CacheAutoConfiguration.class })
+@SpringBootApplication(exclude = { CacheAutoConfiguration.class }) // 禁用spring的默认缓存配置
 @EnableDynamicDataSource
 @ComponentScan("com.jamie.framework")
 public class ApplicationRun {
