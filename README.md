@@ -1,7 +1,8 @@
 ## sharp-sword 是一套基于spring boot常用开发组件的后台快速开发框架
 
-**特性和功能**：
+### 特性和功能：
 
+#### 框架级别
 - 基于springboot 易于使用，快速，后期扩展容易
 - 模块化开发、发布、测试 **sharp-sword-run** 项目入口，**sharp-sword-core** 核心模块，可以新建业务模块集成父工程，包名必须以**com.jamie.framework**为父包
 - 集成Javaweb开发常用的第三方框架和工具，功能丰富
@@ -22,9 +23,13 @@
 - 集成spring boot admin，全局实时检测项目运行情况
 - 集成swagger2接口文档
 
+### 业务级别
+- 提供全局的日期参数处理方式和返回json序列化方式
+- 提供默认的service接口和实现类，处理数据库默认字段
+
 待完善。。。
 
-## 启动方式
+### 启动方式
 
 **开发启动方式**
 
@@ -36,5 +41,5 @@
 
 2. 在 sharp-sword-run\target 目录下会生成打包好的项目文件 **sharp-sword.tar.gz** 和 **sharp-sword.zip** 解压缩后运行 start.sh [start|stop|restart|status]
 
-## License
+### License
 [Apache License 2.0](http://www.apache.org/licenses/)
