@@ -21,7 +21,7 @@
 - 集成java Mail，发送简单邮件、附件邮件、静态资源邮件、html邮件、复杂邮件
 - 提供全局的接口返回规范和异常处理
 - 集成spring boot admin，全局实时检测项目运行情况
-- 集成swagger2接口文档
+- 集成swagger2接口文档 项目运行后访问：http://localhost:9090/api/doc
 
 #### 业务级别
 - 提供全局的日期参数处理方式和返回json序列化方式

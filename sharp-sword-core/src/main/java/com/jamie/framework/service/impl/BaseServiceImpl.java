@@ -1,10 +1,11 @@
-package com.jamie.framework.service;
+package com.jamie.framework.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jamie.framework.constant.AppConstant;
 import com.jamie.framework.entity.BaseEntity;
+import com.jamie.framework.service.BaseService;
 import com.jamie.framework.util.ApplicationContextUtil;
 import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.NotEmpty;
@@ -19,7 +20,7 @@ import java.util.List;
  * @version 1.0
  * @date 2020/3/10 15:32
  */
-public class BaseServiceImpl <M extends BaseMapper<T>, T extends BaseEntity> extends ServiceImpl<M, T> implements BaseService<T>{
+public class BaseServiceImpl <M extends BaseMapper<T>, T extends BaseEntity> extends ServiceImpl<M, T> implements BaseService<T> {
     @Override
     public void deleteLogic(@NotEmpty List<String> ids) {
     }

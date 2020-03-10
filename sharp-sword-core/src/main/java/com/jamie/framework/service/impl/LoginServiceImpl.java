@@ -7,6 +7,9 @@ import com.jamie.framework.bean.SysUser;
 import com.jamie.framework.conf.AppProperties;
 import com.jamie.framework.constant.AppConstant;
 import com.jamie.framework.constant.RedisConstant;
+import com.jamie.framework.enums.LoginFailEnum;
+import com.jamie.framework.event.LoginFailEvent;
+import com.jamie.framework.event.LoginSuccessEvent;
 import com.jamie.framework.idgenerator.IdGenerator;
 import com.jamie.framework.jwt.JWTUtil;
 import com.jamie.framework.jwt.JwtProperties;
@@ -14,6 +17,7 @@ import com.jamie.framework.mapper.SysUserMapper;
 import com.jamie.framework.redis.RedisService;
 import com.jamie.framework.service.LoginService;
 import com.jamie.framework.service.PermissionService;
+import com.jamie.framework.util.ApplicationContextUtil;
 import com.jamie.framework.util.api.ApiCode;
 import com.jamie.framework.util.api.ApiResult;
 import com.jamie.framework.util.http.CookieUtil;
@@ -62,6 +66,7 @@ public class LoginServiceImpl implements LoginService {
         // 获取rdis中用户登录时的salt值
         String salt = redisService.getStr(RedisConstant.RANDOM_SALT_KEY + userid);
         if (StringUtils.isBlank(salt)) {
+            ApplicationContextUtil.publishEvent(new LoginFailEvent(LoginFailEnum.SALT_ERROR));
             log.info("无法获取用户[{}]登录对应的 salt 值.", userid);
             return ApiResult.fail(ApiCode.LOGIN_EXCEPTION, "无法获取登录对应的 salt 值");
         }
@@ -71,43 +76,18 @@ public class LoginServiceImpl implements LoginService {
         List<SysUser> sysUsers = userMapper.selectByMap(map);
         if (CollectionUtils.isEmpty(sysUsers)) {
             log.warn("用户[{}]: 用户名或密码不正确", userid);
+            ApplicationContextUtil.publishEvent(new LoginFailEvent(LoginFailEnum.USER_NOT_EXIST));
             return ApiResult.fail(ApiCode.USERNAME_PASSWORD_ERROR, "用户名或密码不正确");
         }
         SysUser sysUser = sysUsers.get(0);
         String md5Hex = DigestUtil.md5Hex(sysUser.getPwHash().toUpperCase() + salt).toUpperCase();
         // pw: MD5(MD5(明文密码) + salt)
         if (md5Hex.equals(pw)) {
-            String token = JWTUtil.generateToken(userid);
-            String tokenName = jwtProperties.getTokenName();
-            if (StringUtils.isBlank(tokenName)) {
-                tokenName = AppConstant.DEF_TOKEN_NAME;
-            }
-            CookieUtil.set(httpServletResponse, AppConstant.TOKEN_NAME_KEY, tokenName, -1, "/");
-            CookieUtil.set(httpServletResponse, tokenName, token, -1, "/");
-            httpServletResponse.setHeader(AppConstant.TOKEN_NAME_KEY, tokenName);
-            httpServletResponse.setHeader(tokenName, token);
-            // 保存用户信息到redis
-            sysUser.setPassword(null);
-            sysUser.setPwHash(null);
-            redisService.setObj(RedisConstant.USER_INFO_KEY + userid, sysUser, jwtProperties.getExpireSecond());
-            redisService.setStr(RedisConstant.USER_TOKEN_KEY + userid, token, jwtProperties.getExpireSecond());
-
-            // 更新角色相关信息
-            redisService.delKey(RedisConstant.USER_ROLE_KEY + userid);
-            List<SysRoles> sysRoles = permissionService.getRolesByUserId(userid);
-            log.info("sysRoles: {}", sysRoles.toString());
-            // 更新权限相关信息
-            redisService.delKey(RedisConstant.USER_PERMISSION_KEY + userid);
-            List<SysPermission> sysPermissions = permissionService.getSysPermissionByUserId(userid);
-            log.info("sysPermissions: {}", sysPermissions.toString());
-            Map<String, Object> data = new HashMap<>(2);
-            data.put("token", token);
-            data.put("tokenName", tokenName);
-            data.put("userInfo", sysUser);
-            data.put("roles", sysRoles.stream().map(SysRoles::getRoleCode).collect(Collectors.toList()));
-            data.put("permissions", sysPermissions.stream().map(SysPermission::getCode).collect(Collectors.toList()));
+            ApplicationContextUtil.publishEvent(new LoginSuccessEvent(sysUser));
+            Map<String, Object> data = loginSuccess(userid, httpServletResponse, sysUser);
             return ApiResult.ok(data);
         }
+        ApplicationContextUtil.publishEvent(new LoginFailEvent(LoginFailEnum.PASSWORD_ERROR));
         log.warn("用户[{}]: 用户名或密码不正确", userid);
         return ApiResult.fail(ApiCode.USERNAME_PASSWORD_ERROR, "用户名或密码不正确");
     }
@@ -146,5 +126,38 @@ public class LoginServiceImpl implements LoginService {
 //                }
 //            }
 //        }
+    }
+
+    private Map<String, Object> loginSuccess(String userid, HttpServletResponse httpServletResponse, SysUser sysUser) {
+        String token = JWTUtil.generateToken(userid);
+        String tokenName = jwtProperties.getTokenName();
+        if (StringUtils.isBlank(tokenName)) {
+            tokenName = AppConstant.DEF_TOKEN_NAME;
+        }
+        CookieUtil.set(httpServletResponse, AppConstant.TOKEN_NAME_KEY, tokenName, -1, "/");
+        CookieUtil.set(httpServletResponse, tokenName, token, -1, "/");
+        httpServletResponse.setHeader(AppConstant.TOKEN_NAME_KEY, tokenName);
+        httpServletResponse.setHeader(tokenName, token);
+        // 保存用户信息到redis
+        sysUser.setPassword(null);
+        sysUser.setPwHash(null);
+        redisService.setObj(RedisConstant.USER_INFO_KEY + userid, sysUser, jwtProperties.getExpireSecond());
+        redisService.setStr(RedisConstant.USER_TOKEN_KEY + userid, token, jwtProperties.getExpireSecond());
+
+        // 更新角色相关信息
+        redisService.delKey(RedisConstant.USER_ROLE_KEY + userid);
+        List<SysRoles> sysRoles = permissionService.getRolesByUserId(userid);
+        log.info("sysRoles: {}", sysRoles.toString());
+        // 更新权限相关信息
+        redisService.delKey(RedisConstant.USER_PERMISSION_KEY + userid);
+        List<SysPermission> sysPermissions = permissionService.getSysPermissionByUserId(userid);
+        log.info("sysPermissions: {}", sysPermissions.toString());
+        Map<String, Object> data = new HashMap<>(2);
+        data.put("token", token);
+        data.put("tokenName", tokenName);
+        data.put("userInfo", sysUser);
+        data.put("roles", sysRoles.stream().map(SysRoles::getRoleCode).collect(Collectors.toList()));
+        data.put("permissions", sysPermissions.stream().map(SysPermission::getCode).collect(Collectors.toList()));
+        return data;
     }
 }

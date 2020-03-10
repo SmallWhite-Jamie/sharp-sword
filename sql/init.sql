@@ -298,6 +298,23 @@ CREATE TABLE `t_user`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci;
 
 -- ----------------------------
+-- Table structure for sys_login_error
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_login_error`;
+CREATE TABLE `sys_login_error` (
+  `id` varchar(64) NOT NULL COMMENT '主键',
+  `user_name` varchar(64) DEFAULT NULL COMMENT '用户ID',
+  `login_time` datetime DEFAULT NULL COMMENT '登录时间',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `create_user` varchar(64) DEFAULT NULL COMMENT '创建人',
+  `update_user` varchar(64) DEFAULT NULL COMMENT '更新人',
+  `revision` int(11) NOT NULL DEFAULT '0' COMMENT '乐观锁',
+  `is_deleted` varchar(1) NOT NULL DEFAULT '0' COMMENT '删除标记 0正常1删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户登录错误次数记录 用户登录错误次数记录表';
+
+-- ----------------------------
 -- Records of t_user
 -- ----------------------------
 BEGIN;

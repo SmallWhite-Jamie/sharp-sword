@@ -7,6 +7,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,24 +33,29 @@ public class ApplicationContextUtil implements ApplicationContextAware {
     }
 
     public static AppProperties getAppProperties() {
-        if (applicationContext == null) {
-            throw new ApplicationContextException("ApplicationContext 未初始化");
-        }
+        testApplicationContext();
         return ApplicationContextUtil.getBean(AppProperties.class);
     }
 
     public static AppBaseService getAppBaseService() {
-        if (applicationContext == null) {
-            throw new ApplicationContextException("ApplicationContext 未初始化");
-        }
+        testApplicationContext();
         return ApplicationContextUtil.getBean(AppBaseService.class);
     }
 
-    public static IdGenerator getIdGenerator() {
+    private static void testApplicationContext() {
         if (applicationContext == null) {
             throw new ApplicationContextException("ApplicationContext 未初始化");
         }
+    }
+
+    public static IdGenerator getIdGenerator() {
+        testApplicationContext();
         return ApplicationContextUtil.getBean(IdGenerator.class);
+    }
+
+    public static void publishEvent(ApplicationEvent event) {
+        testApplicationContext();
+        applicationContext.publishEvent(event);
     }
 
 }

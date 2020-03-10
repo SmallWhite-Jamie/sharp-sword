@@ -90,7 +90,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/webjars/springfox-swagger-ui/**", "anon");
         filterChainDefinitionMap.put("/swagger-resources/**", "anon");
         filterChainDefinitionMap.put("/v2/api-docs", "anon");
-
+        filterChainDefinitionMap.put("/configuration/security", "anon");
+        filterChainDefinitionMap.put("/configuration/ui", "anon");
+        filterChainDefinitionMap.put("/doc", "anon");
 //        filterChainDefinitionMap.put("/logout", "logoutFilter");
         filterChainDefinitionMap.put("/**", "jwtFilter");
 
