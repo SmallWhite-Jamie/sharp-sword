@@ -36,7 +36,7 @@ public class BaseEntity implements Serializable {
     /**
      * 是否删除 1 删除
      */
-    private String isDeleted;
+    private int isDeleted;
 
     /**
      * 版本号 乐观锁

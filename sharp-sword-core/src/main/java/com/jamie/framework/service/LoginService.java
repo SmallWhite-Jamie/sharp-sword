@@ -1,6 +1,7 @@
 package com.jamie.framework.service;
 
 
+import com.jamie.framework.login.vo.SysUserEntityVO;
 import com.jamie.framework.util.api.ApiResult;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Description: LoginService
  */
 public interface LoginService {
-    ApiResult login(String userid, String pw, HttpServletResponse httpServletResponse);
+    ApiResult login(SysUserEntityVO userEntityVO, HttpServletResponse httpServletResponse);
 
     String getLoginRandomSalt(String userid);
 

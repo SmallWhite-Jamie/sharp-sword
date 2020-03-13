@@ -2,7 +2,7 @@ package com.jamie.framework.service.impl;
 
 import com.jamie.framework.bean.SysPermission;
 import com.jamie.framework.bean.SysRoles;
-import com.jamie.framework.bean.SysUser;
+import com.jamie.framework.login.entity.SysUserEntity;
 import com.jamie.framework.bean.User;
 import com.jamie.framework.bean.UserInfo;
 import com.jamie.framework.datasource.annotation.TargetDataSource;
@@ -59,11 +59,11 @@ public class UserServiceImpl implements UserServiceI {
 
     @Override
     public UserInfo getUserInfo() {
-        SysUser user = appBaseService.getUserInfo();
+        SysUserEntity user = appBaseService.getUserInfo();
         List<SysRoles> roles = permissionService.getRolesByUserId(user.getUserid());
         List<SysPermission> permissions = permissionService.getSysPermissionByUserId(user.getUserid());
         UserInfo userInfo = new UserInfo();
-        userInfo.setSysUser(user);
+        userInfo.setSysUserEntity(user);
         userInfo.setPermissions(permissions.stream().map(SysPermission::getCode).collect(Collectors.toList()));
         userInfo.setRoles(roles.stream().map(SysRoles::getRoleCode).collect(Collectors.toList()));
         return userInfo;

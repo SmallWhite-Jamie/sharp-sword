@@ -1,4 +1,4 @@
-package com.jamie.framework.bean;
+package com.jamie.framework.login.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 @Data
 @TableName("sys_user")
-public class SysUser implements Serializable {
+public class SysUserEntity implements Serializable {
     @TableId("id")
     private String id;
     private String userid;

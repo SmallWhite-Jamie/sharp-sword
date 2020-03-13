@@ -1,5 +1,6 @@
-package com.jamie.framework.controller;
+package com.jamie.framework.login.controller;
 
+import com.jamie.framework.login.vo.SysUserEntityVO;
 import com.jamie.framework.service.LoginService;
 import com.jamie.framework.util.api.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class LoginController {
 
 
     @RequestMapping("/login")
-    public ApiResult login(String username, String password, HttpServletResponse httpServletResponse) {
-        return loginService.login(username, password, httpServletResponse);
+    public ApiResult login(SysUserEntityVO userEntityVO, HttpServletResponse httpServletResponse) {
+        return loginService.login(userEntityVO, httpServletResponse);
     }
 
     @RequestMapping("/getLoginSalt")

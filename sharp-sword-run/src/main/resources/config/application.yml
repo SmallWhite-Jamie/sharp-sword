@@ -11,21 +11,21 @@ spring:
     #动态数据源
     dynamic:
       master:
-        jdbc-url: jdbc:mysql://127.0.0.1:3306/springboot?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+        jdbc-url: jdbc:mysql://192.168.152.128:3306/sharp_sword?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
         username: root
-        password: admin
+        password: 123456
         driver-class-name: com.mysql.jdbc.Driver
         pool-name: Master-DB
-      slave1:
-        jdbc-url: jdbc:mysql://127.0.0.1:3306/ssa?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
-        username: root
-        password: admin
-        driver-class-name: com.mysql.jdbc.Driver
-        pool-name: Slave1-DB
+#      slave1:
+#        jdbc-url: jdbc:mysql://192.168.152.128:3306/sharp_sword?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+#        username: root
+#        password: 123456
+#        driver-class-name: com.mysql.jdbc.Driver
+#        pool-name: Slave1-DB
   redis:
-    host: 127.0.0.1
+    host: 192.168.152.128
     port: 6379
-    password: redis123
+#    password: redis123
   quartz:
     job-store-type: memory
     properties:
@@ -69,6 +69,10 @@ app:
       com_jamie_framework_quartz_job_OpLogWriteQuartzJob: # QuartzCronProperties 注入时候 "." 分割无法注入(null)，所以使用"_" 下划线隔开包名
         interval: 1
         repeatCount: 3
+  login:
+    validator:
+      captcha: true
+      verifyPasswordErrorNum: true
 shiro:
   jwt:
     tokenName: X-TOKEN

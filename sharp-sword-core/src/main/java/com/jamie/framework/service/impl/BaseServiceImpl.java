@@ -21,9 +21,6 @@ import java.util.List;
  * @date 2020/3/10 15:32
  */
 public class BaseServiceImpl <M extends BaseMapper<T>, T extends BaseEntity> extends ServiceImpl<M, T> implements BaseService<T> {
-    @Override
-    public void deleteLogic(@NotEmpty List<String> ids) {
-    }
 
     @Override
     public boolean save(T entity) {
@@ -94,7 +91,7 @@ public class BaseServiceImpl <M extends BaseMapper<T>, T extends BaseEntity> ext
         }
         entity.setUpdateUser(id);
         entity.setUpdateTime(new Date());
-        entity.setIsDeleted(AppConstant.STR_ZERO);
+        entity.setIsDeleted(AppConstant.INT_ZERO);
         entity.setRevision(AppConstant.INT_ZERO);
     }
 
@@ -114,7 +111,7 @@ public class BaseServiceImpl <M extends BaseMapper<T>, T extends BaseEntity> ext
         entity.setCreateTime(new Date());
         entity.setUpdateUser(id);
         entity.setUpdateTime(new Date());
-        entity.setIsDeleted(AppConstant.STR_ZERO);
+        entity.setIsDeleted(AppConstant.INT_ZERO);
         entity.setRevision(AppConstant.INT_ZERO);
     }
 }

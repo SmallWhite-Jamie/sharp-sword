@@ -1,5 +1,6 @@
 package com.jamie.framework.bean;
 
+import com.jamie.framework.login.entity.SysUserEntity;
 import lombok.Data;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  */
 @Data
 public class UserInfo {
-    private SysUser sysUser;
+    private SysUserEntity sysUserEntity;
     private List<String> roles;
     private List<String> permissions;
 }

@@ -3,17 +3,20 @@ package com.jamie.framework.service.impl;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.jamie.framework.bean.SysPermission;
 import com.jamie.framework.bean.SysRoles;
-import com.jamie.framework.bean.SysUser;
+import com.jamie.framework.login.entity.SysUserEntity;
 import com.jamie.framework.conf.AppProperties;
 import com.jamie.framework.constant.AppConstant;
 import com.jamie.framework.constant.RedisConstant;
-import com.jamie.framework.enums.LoginFailEnum;
-import com.jamie.framework.event.LoginFailEvent;
-import com.jamie.framework.event.LoginSuccessEvent;
+import com.jamie.framework.enums.ErrorCode;
+import com.jamie.framework.login.event.LoginFailEvent;
+import com.jamie.framework.login.event.LoginStartEvent;
+import com.jamie.framework.login.event.LoginSuccessEvent;
 import com.jamie.framework.idgenerator.IdGenerator;
 import com.jamie.framework.jwt.JWTUtil;
 import com.jamie.framework.jwt.JwtProperties;
-import com.jamie.framework.mapper.SysUserMapper;
+import com.jamie.framework.login.LoginFailDataBean;
+import com.jamie.framework.login.vo.SysUserEntityVO;
+import com.jamie.framework.login.mapper.SysUserMapper;
 import com.jamie.framework.redis.RedisService;
 import com.jamie.framework.service.LoginService;
 import com.jamie.framework.service.PermissionService;
@@ -62,32 +65,37 @@ public class LoginServiceImpl implements LoginService {
     private PermissionService permissionService;
 
     @Override
-    public ApiResult login(String userid, String pw, HttpServletResponse httpServletResponse) {
-        // 获取rdis中用户登录时的salt值
+    public ApiResult login(SysUserEntityVO userEntityVO, HttpServletResponse httpServletResponse) {
+        String userid = userEntityVO.getUserid();
+        // 1、获取rdis中用户登录时的salt值
         String salt = redisService.getStr(RedisConstant.RANDOM_SALT_KEY + userid);
         if (StringUtils.isBlank(salt)) {
-            ApplicationContextUtil.publishEvent(new LoginFailEvent(LoginFailEnum.SALT_ERROR));
+            ApplicationContextUtil.publishEvent(new LoginFailEvent(new LoginFailDataBean(ErrorCode.SALT_ERROR, userid)));
             log.info("无法获取用户[{}]登录对应的 salt 值.", userid);
             return ApiResult.fail(ApiCode.LOGIN_EXCEPTION, "无法获取登录对应的 salt 值");
         }
+        // 发布一个事件，通过订阅该事件，在验证密码之前做一些操作
+        ApplicationContextUtil.publishEvent(new LoginStartEvent(userEntityVO));
+
         Map<String, Object> map = new HashMap<>(2);
         map.put("userid", userid);
-        // 获取数据库用户信息
-        List<SysUser> sysUsers = userMapper.selectByMap(map);
-        if (CollectionUtils.isEmpty(sysUsers)) {
+        // 2、获取数据库用户信息
+        List<SysUserEntity> sysUserEntities = userMapper.selectByMap(map);
+        if (CollectionUtils.isEmpty(sysUserEntities)) {
             log.warn("用户[{}]: 用户名或密码不正确", userid);
-            ApplicationContextUtil.publishEvent(new LoginFailEvent(LoginFailEnum.USER_NOT_EXIST));
+            ApplicationContextUtil.publishEvent(new LoginFailEvent(new LoginFailDataBean(ErrorCode.USER_NOT_EXIST, userid)));
             return ApiResult.fail(ApiCode.USERNAME_PASSWORD_ERROR, "用户名或密码不正确");
         }
-        SysUser sysUser = sysUsers.get(0);
-        String md5Hex = DigestUtil.md5Hex(sysUser.getPwHash().toUpperCase() + salt).toUpperCase();
+        SysUserEntity sysUserEntity = sysUserEntities.get(0);
+        String md5Hex = DigestUtil.md5Hex(sysUserEntity.getPwHash().toUpperCase() + salt).toUpperCase();
         // pw: MD5(MD5(明文密码) + salt)
-        if (md5Hex.equals(pw)) {
-            ApplicationContextUtil.publishEvent(new LoginSuccessEvent(sysUser));
-            Map<String, Object> data = loginSuccess(userid, httpServletResponse, sysUser);
+        if (md5Hex.equals(userEntityVO.getPassword())) {
+            ApplicationContextUtil.publishEvent(new LoginSuccessEvent(sysUserEntity));
+            Map<String, Object> data = loginSuccess(userid, httpServletResponse, sysUserEntity);
             return ApiResult.ok(data);
         }
-        ApplicationContextUtil.publishEvent(new LoginFailEvent(LoginFailEnum.PASSWORD_ERROR));
+        // 发布一个密码错误事件
+        ApplicationContextUtil.publishEvent(new LoginFailEvent(new LoginFailDataBean(ErrorCode.PASSWORD_ERROR, userid)));
         log.warn("用户[{}]: 用户名或密码不正确", userid);
         return ApiResult.fail(ApiCode.USERNAME_PASSWORD_ERROR, "用户名或密码不正确");
     }
@@ -128,7 +136,7 @@ public class LoginServiceImpl implements LoginService {
 //        }
     }
 
-    private Map<String, Object> loginSuccess(String userid, HttpServletResponse httpServletResponse, SysUser sysUser) {
+    private Map<String, Object> loginSuccess(String userid, HttpServletResponse httpServletResponse, SysUserEntity sysUserEntity) {
         String token = JWTUtil.generateToken(userid);
         String tokenName = jwtProperties.getTokenName();
         if (StringUtils.isBlank(tokenName)) {
@@ -139,9 +147,9 @@ public class LoginServiceImpl implements LoginService {
         httpServletResponse.setHeader(AppConstant.TOKEN_NAME_KEY, tokenName);
         httpServletResponse.setHeader(tokenName, token);
         // 保存用户信息到redis
-        sysUser.setPassword(null);
-        sysUser.setPwHash(null);
-        redisService.setObj(RedisConstant.USER_INFO_KEY + userid, sysUser, jwtProperties.getExpireSecond());
+        sysUserEntity.setPassword(null);
+        sysUserEntity.setPwHash(null);
+        redisService.setObj(RedisConstant.USER_INFO_KEY + userid, sysUserEntity, jwtProperties.getExpireSecond());
         redisService.setStr(RedisConstant.USER_TOKEN_KEY + userid, token, jwtProperties.getExpireSecond());
 
         // 更新角色相关信息
@@ -155,7 +163,7 @@ public class LoginServiceImpl implements LoginService {
         Map<String, Object> data = new HashMap<>(2);
         data.put("token", token);
         data.put("tokenName", tokenName);
-        data.put("userInfo", sysUser);
+        data.put("userInfo", sysUserEntity);
         data.put("roles", sysRoles.stream().map(SysRoles::getRoleCode).collect(Collectors.toList()));
         data.put("permissions", sysPermissions.stream().map(SysPermission::getCode).collect(Collectors.toList()));
         return data;

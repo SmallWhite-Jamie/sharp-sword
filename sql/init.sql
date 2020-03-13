@@ -303,7 +303,7 @@ CREATE TABLE `t_user`  (
 DROP TABLE IF EXISTS `sys_login_error`;
 CREATE TABLE `sys_login_error` (
   `id` varchar(64) NOT NULL COMMENT '主键',
-  `user_name` varchar(64) DEFAULT NULL COMMENT '用户ID',
+  `user_id` varchar(64) DEFAULT NULL COMMENT '用户ID',
   `login_time` datetime DEFAULT NULL COMMENT '登录时间',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',

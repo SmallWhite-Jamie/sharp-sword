@@ -1,7 +1,11 @@
-package com.jamie.framework.entity;
+package com.jamie.framework.login.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.jamie.framework.entity.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.util.Date;
 
 /**
  * SysLoginError 登录密码错误次数记录
@@ -12,5 +16,8 @@ import lombok.Data;
  */
 @TableName("sys_login_error")
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class SysLoginErrorEntity extends BaseEntity {
+    private String userId;
+    private Date loginTime;
 }

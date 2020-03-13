@@ -1,6 +1,6 @@
 package com.jamie.framework.service.impl;
 
-import com.jamie.framework.bean.SysUser;
+import com.jamie.framework.login.entity.SysUserEntity;
 import com.jamie.framework.constant.RedisConstant;
 import com.jamie.framework.jwt.JWTUtil;
 import com.jamie.framework.redis.RedisService;
@@ -35,12 +35,12 @@ public class AppBaseService {
         return null;
     }
 
-    public SysUser getUserInfo() {
+    public SysUserEntity getUserInfo() {
         String userId = getUserId();
         if (StringUtils.isBlank(userId)) {
             return null;
         }
-        return (SysUser) redisService.getObj(RedisConstant.USER_INFO_KEY + userId);
+        return (SysUserEntity) redisService.getObj(RedisConstant.USER_INFO_KEY + userId);
     }
 
 }
