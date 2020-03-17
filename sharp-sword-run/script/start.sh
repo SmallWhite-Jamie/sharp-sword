@@ -2,6 +2,7 @@
 #这里可替换为你自己的执行程序，其他代码无需更改
 APP_NAME=sharp-sword.jar
 APP_HOME=`pwd`
+JVM_PARAM="-Xms1024m -Xmx1024m -XX:CompressedClassSpaceSize=256m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m"
 #log文件夹不存在就创建
 if [[ ! -d "${APP_HOME}/log" ]];then
   mkdir ${APP_HOME}/log
@@ -9,7 +10,7 @@ fi
 LOG_PATH=${APP_HOME}/log/${APP_NAME}.log
 #使用说明，用来提示输入参数
 usage() {
-    echo "Usage: sh start.sh [start|stop|restart|status]"
+    echo "Usage: sh start.sh [start|stop|restart|status|health]"
     exit 1
 }
 
@@ -31,11 +32,11 @@ start(){
   if [[ $? -eq "0" ]]; then
     echo "${APP_NAME} is already running. pid=${pid} ."
   else
-    nohup java -jar ${APP_NAME} > ${LOG_PATH} 2>&1 &
+    nohup java -jar -server ${JVM_PARAM} ${APP_NAME} > ${LOG_PATH} 2>&1 &
     echo "-----------------------------------------"
     echo "-----正在启动,可按CTRL+C退出当前界面-----"
     echo "-----------------------------------------"
-    sleep 1s
+    sleep 2s
     tail -f ${LOG_PATH}
   fi
 }
@@ -61,6 +62,28 @@ status(){
   fi
 }
 
+health(){
+    is_exist
+    if [[ $? -eq "1" ]]; then
+        echo "${APP_NAME} is not running"
+    else
+        for i in {1..10}
+        do
+            echo "垃圾回收统计: jstat -gcutil"
+            jstat -gcutil ${pid}
+            echo
+            echo "堆内存统计: jstat -gccapacity"
+            jstat -gccapacity ${pid}
+            echo
+            echo "-----------------------------------错误日志-----------------------------------"
+            echo
+            grep -30 Exception ${LOG_PATH}
+            echo
+            sleep 5s
+        done
+    fi
+}
+
 #重启
 restart(){
   stop
@@ -80,6 +103,9 @@ case "$1" in
     ;;
   "restart")
     restart
+    ;;
+  "health")
+    health
     ;;
   *)
     usage
