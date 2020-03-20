@@ -25,17 +25,17 @@ import java.util.Arrays;
 @Slf4j
 @Order(100)
 public class SysLogAspect {
-    @Pointcut("execution(* com.jamie.framework..controller.*.*(..))")
+    @Pointcut("execution(* com.jamie.framework..controller.*.*(..)) && !execution(* com.jamie.framework.jobadmin..*.*(..))")
     public void pointcut() {
 
     }
 
     @Around("pointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        if (log.isDebugEnabled()) {
-            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            if (attributes != null) {
-                HttpServletRequest request = attributes.getRequest();
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            HttpServletRequest request = attributes.getRequest();
+            if (log.isDebugEnabled()) {
                 String classMethod = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
                 log.debug("url={}, method={}, class_method={}, args={}",
                         request.getRequestURL(),
@@ -43,15 +43,16 @@ public class SysLogAspect {
                         classMethod,
                         Arrays.toString(joinPoint.getArgs()));
             }
+            long start = System.currentTimeMillis();
+            Object obj = joinPoint.proceed();
+            // 计算请求耗时
+            long totalTime = System.currentTimeMillis() - start;
+            if (obj instanceof ApiResult) {
+                ((ApiResult) obj).setTotalTime(totalTime);
+            }
+            log.info("url: {}, request time: {} Millis", request.getRequestURL(), totalTime);
+            return obj;
         }
-        long start = System.currentTimeMillis();
-        Object obj = joinPoint.proceed();
-        // 计算请求耗时
-        long totalTime = System.currentTimeMillis() - start;
-        if (obj instanceof ApiResult) {
-            ((ApiResult) obj).setTotalTime(totalTime);
-        }
-        log.info("Request time: {} Millis", totalTime);
-        return obj;
+        return null;
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @date 2020/3/13 15:19
  */
 @Component
-@ConfigurationProperties(prefix = "app.login.validator")
+@ConfigurationProperties(prefix = "login.validator")
 @Data
 public class LoginValidatorProperties {
     /**

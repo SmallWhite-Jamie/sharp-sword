@@ -112,6 +112,9 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public List<Object> getList(Object key) {
+        if (key instanceof String) {
+            key = appProperties.getKey() + ":" + key;
+        }
         return redisTemplate.opsForList().range(key, 0, -1);
     }
 
@@ -132,6 +135,9 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void listRPush(Object key, Object... value) {
+        if (key instanceof String) {
+            key = appProperties.getKey() + ":" + key;
+        }
         redisTemplate.opsForList().rightPushAll(key, value);
     }
 

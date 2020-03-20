@@ -1,4 +1,4 @@
-package com.jamie.framework.service.impl;
+package com.jamie.framework.login.service.impl;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import com.jamie.framework.bean.SysPermission;
@@ -18,7 +18,7 @@ import com.jamie.framework.login.LoginFailDataBean;
 import com.jamie.framework.login.vo.SysUserEntityVO;
 import com.jamie.framework.login.mapper.SysUserMapper;
 import com.jamie.framework.redis.RedisService;
-import com.jamie.framework.service.LoginService;
+import com.jamie.framework.login.service.LoginService;
 import com.jamie.framework.service.PermissionService;
 import com.jamie.framework.util.ApplicationContextUtil;
 import com.jamie.framework.util.api.ApiCode;

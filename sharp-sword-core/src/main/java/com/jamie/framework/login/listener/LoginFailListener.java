@@ -43,7 +43,7 @@ public class LoginFailListener implements ApplicationListener<LoginFailEvent> {
             case PASSWORD_ERROR: {
                 if (loginValidatorProperties.isVerifyPasswordErrorNum()) {
                     SysLoginErrorEntity errorEntity = new SysLoginErrorEntity();
-                    errorEntity.setUserName(ObjectUtil.toString(source.getData()));
+                    errorEntity.setUserId(ObjectUtil.toString(source.getData()));
                     errorEntity.setLoginTime(new Date());
                     loginErrorService.save(errorEntity);
                 }

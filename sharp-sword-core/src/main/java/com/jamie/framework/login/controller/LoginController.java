@@ -1,7 +1,7 @@
 package com.jamie.framework.login.controller;
 
 import com.jamie.framework.login.vo.SysUserEntityVO;
-import com.jamie.framework.service.LoginService;
+import com.jamie.framework.login.service.LoginService;
 import com.jamie.framework.util.api.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

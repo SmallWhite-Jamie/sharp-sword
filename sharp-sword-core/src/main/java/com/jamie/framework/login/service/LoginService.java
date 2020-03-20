@@ -1,4 +1,4 @@
-package com.jamie.framework.service;
+package com.jamie.framework.login.service;
 
 
 import com.jamie.framework.login.vo.SysUserEntityVO;

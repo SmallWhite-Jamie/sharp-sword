@@ -93,6 +93,10 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/configuration/security", "anon");
         filterChainDefinitionMap.put("/configuration/ui", "anon");
         filterChainDefinitionMap.put("/doc", "anon");
+        // 静态资源不拦截
+        filterChainDefinitionMap.put("/static/**", "anon");
+        // xxl-job-admin 不拦截
+        filterChainDefinitionMap.put("/xxl-job-admin/**", "anon");
 //        filterChainDefinitionMap.put("/logout", "logoutFilter");
         filterChainDefinitionMap.put("/**", "jwtFilter");
 

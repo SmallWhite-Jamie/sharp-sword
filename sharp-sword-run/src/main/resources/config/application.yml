@@ -11,7 +11,7 @@ spring:
     #动态数据源
     dynamic:
       master:
-        jdbc-url: jdbc:mysql://192.168.152.128:3306/sharp_sword?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+        jdbc-url: jdbc:mysql://192.168.152.129:3306/sharp_sword?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
         username: root
         password: 123456
         driver-class-name: com.mysql.jdbc.Driver
@@ -23,9 +23,11 @@ spring:
 #        driver-class-name: com.mysql.jdbc.Driver
 #        pool-name: Slave1-DB
   redis:
-    host: 192.168.152.128
+    host: 192.168.152.129
     port: 6379
 #    password: redis123
+
+#定时任务相关
   quartz:
     job-store-type: memory
     properties:
@@ -33,6 +35,13 @@ spring:
         quartz:
           jobStore:
             class: org.quartz.simpl.RAMJobStore
+    # cronMap 和 details 同时配置 cronMap 优先
+    cronMap:
+      com_jamie_framework_quartz_job_OpLogWriteQuartzJob: 0/30 * * * * ? *
+    details:
+      com_jamie_framework_quartz_job_OpLogWriteQuartzJob: # QuartzCronProperties 注入时候 "." 分割无法注入(null)，所以使用"_" 下划线隔开包名
+        interval: 1
+        repeatCount: 3
   data:
     elasticsearch:
       cluster-name: elasticsearch
@@ -43,12 +52,24 @@ spring:
       max-request-size: 50MB
   mail:
     host: mail.test.com
-#    username: test1
+    username: test1
 #    password: test1
     port: 25
+  mvc:
+    servlet:
+      load-on-startup: 0
+    static-path-pattern: /static/**
+  # freemarker 配置
+  freemarker:
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
+    charset: UTF-8
+    request-context-attribute: request
+    settings:
+      number_format: 0.##########
 logging:
   level:
-    com.jamie.framework: debug
+    com.jamie.framework: info
   path: D:\logs
 # mybatis-plus
 mybatis-plus:
@@ -62,17 +83,11 @@ app:
   key: APP1
   login-salt-timeout-seconds: 60
   exclude-urls: /instances,/actuator/**,/search/**,/test/**
-  quartz: # cronMap 和 details 同时配置 cronMap 优先
-    cronMap:
-      com_jamie_framework_quartz_job_OpLogWriteQuartzJob: 0/30 * * * * ? *
-    details:
-      com_jamie_framework_quartz_job_OpLogWriteQuartzJob: # QuartzCronProperties 注入时候 "." 分割无法注入(null)，所以使用"_" 下划线隔开包名
-        interval: 1
-        repeatCount: 3
-  login:
-    validator:
-      captcha: true
-      verifyPasswordErrorNum: true
+#登录验证相关
+login:
+  validator:
+    captcha: true
+    verifyPasswordErrorNum: true
 shiro:
   jwt:
     tokenName: X-TOKEN
@@ -85,3 +100,42 @@ shiro:
 zookeeper:
   connect-addr: 192.168.74.128:2181
   namespace: super
+
+# xxl-job -------------------------start
+### actuator
+management:
+  context-path: /actuator
+  health:
+    mail:
+      enabled: false
+xxl:
+  job:
+    ## 调度中心通讯TOKEN
+    accessToken:
+    ## 调度中心国际化配置
+    i18n:
+    logretentiondays: 30
+    ## 调度线程池最大线程配置
+    triggerpool:
+      fast:
+        max: 10
+      slow:
+        max: 5
+    # 执行器端（业务模块端配置）
+    client:
+      # 调度中心部署跟地址，如果是外部服务则配置xxl-job服务器地址
+      admin-addresses: http://127.0.0.1:${server.port}${server.servlet.context-path}/xxl-job-admin
+      # 执行器AppName
+      appName: xxl-job-executor
+      # 执行器IP
+      ip:
+      # 执行器端口号,xxl服务器与业务模块rpc通信端口,不能与业务模块服务端口相同
+      port: 9091
+      ## 执行器通讯TOKEN
+      access-token:
+      ## 执行器运行日志文件存储磁盘路径
+      log-path:
+      ## 执行器日志文件保存天数
+      log-retention-days: 30
+
+# xxl-job -------------------------end

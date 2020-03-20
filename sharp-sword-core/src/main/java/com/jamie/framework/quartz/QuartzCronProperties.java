@@ -12,7 +12,7 @@ import java.util.Map;
  * @Description: QuartzCronProperties
  */
 @Component
-@ConfigurationProperties(prefix = "app.quartz")
+@ConfigurationProperties(prefix = "spring.quartz")
 public class QuartzCronProperties {
 
     private Map<String, String> cronMap = new HashMap<>();
