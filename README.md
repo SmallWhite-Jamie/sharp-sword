@@ -22,7 +22,9 @@
 - 提供全局的接口返回规范和异常处理
 - 集成spring boot admin，全局实时检测项目运行情况
 - 集成swagger2接口文档 项目运行后访问：http://localhost:9090/api/doc
-- 集成[xxl-job](https://www.xuxueli.com/xxl-job/)任务调度平台（与内置的**Quartz定时任务**模块不冲突），客户端依赖**sharp-sword-job**，需要使用sharp-sword项目内置的xxl-job服务端，直接依赖 **sharp-sword-job-admin** 模块即可，内置服务地址 http://localhost:9090/api/xxl-job-admin/toLogin
+- 集成[xxl-job](https://www.xuxueli.com/xxl-job/)任务调度平台（与内置的**Quartz定时任务**模块不冲突），
+客户端依赖**sharp-sword-job**，需要使用sharp-sword项目内置的xxl-job服务端，直接依赖 **sharp-sword-job-admin** 模块即可，
+内置服务地址 http://localhost:9090/api/xxl-job-admin/toLogin 账号：admin 密码：123456
 
 #### 业务级别
 - 提供全局的日期参数处理方式和返回json序列化方式
