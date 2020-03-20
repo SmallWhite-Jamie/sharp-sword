@@ -28,8 +28,9 @@
 - 提供全局的日期参数处理方式和返回json序列化方式
 - 提供默认的service接口和实现类，处理数据库默认字段
 - 定时任务提供两种使用方式 
-  1）Quartz定时任务，参考com.jamie.framework.quartz.job.OpLogWriteQuartzJob的实现和配置方式
-  2）xxl-job 实现分布式定时任务，参考https://www.xuxueli.com/xxl-job/
+  - 1）Quartz定时任务，参考com.jamie.framework.quartz.job.OpLogWriteQuartzJob的实现和配置方式
+  - 2）xxl-job 实现分布式定时任务，参考https://www.xuxueli.com/xxl-job/
+
 待完善。。。
 
 ### 启动方式
