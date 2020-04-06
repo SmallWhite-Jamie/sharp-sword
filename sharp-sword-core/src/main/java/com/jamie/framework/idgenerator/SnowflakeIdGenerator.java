@@ -1,11 +1,14 @@
 package com.jamie.framework.idgenerator;
 
+import org.springframework.stereotype.Component;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author jamie.li
  */
+@Component("snowflakeIdGenerator")
 public final class SnowflakeIdGenerator implements IdGenerator {
     /**
      * 开始时间截 (2018-01-01)
@@ -55,7 +58,7 @@ public final class SnowflakeIdGenerator implements IdGenerator {
     /**
      * 工作机器ID(0~255)
      */
-    private long workerId = 0L;
+    private long workerId;
 
     /**
      * 生成序列的掩码，这里为4095 (0b111111111111=0xfff=4095)
@@ -75,7 +78,7 @@ public final class SnowflakeIdGenerator implements IdGenerator {
     /**
      * 2位生成发布方式，0代表嵌入式发布、1代表中心服务器发布模式、2代表rest发布方式、3代表保留未用
      */
-    private long getMethod = 0L;
+    private long getMethod;
 
     /**
      * 成发布方式的掩码，这里为3 (0b11=0x3=3)
@@ -103,6 +106,8 @@ public final class SnowflakeIdGenerator implements IdGenerator {
         this.workerId = workerId;
     }
 
+
+
     /**
      * 获得下一个ID (该方法是线程安全的)
      *
@@ -120,8 +125,8 @@ public final class SnowflakeIdGenerator implements IdGenerator {
 
         //如果是同一时间生成的，则进行毫秒内序列
         if (lastTimestamp == timestamp) {
+            lock.lock();
             try {
-                lock.lock();
                 sequence = (sequence + 1) & sequenceMask;
                 //毫秒内序列溢出
                 if (sequence == 0) {
@@ -152,26 +157,8 @@ public final class SnowflakeIdGenerator implements IdGenerator {
     }
 
     @Override
-    public long[] nextId(int nums) {
-        long[] ids = new long[nums];
-        for (int i = 0; i < nums; i++) {
-            ids[i] = nextId();
-        }
-        return ids;
-    }
-
-    @Override
     public String nextIdStr() {
         return Long.toString(nextId());
-    }
-
-    @Override
-    public String[] nextIdStr(int nums) {
-        String[] ids = new String[nums];
-        for (int i = 0; i < nums; i++) {
-            ids[i] = nextIdStr();
-        }
-        return ids;
     }
 
     /**

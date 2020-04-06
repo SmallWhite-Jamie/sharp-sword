@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.jamie.framework.idgenerator.IdGenerator;
 import com.jamie.framework.mybatis.CustomIdentifierGenerator;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,14 +23,13 @@ public class MybatisConf {
     }
 
     /**
-     * 配置ID生成器
+     * 如果不使用mybatis 内置的ID生成器，可以自定义配置，通过@Qualifier("redisIdGenerator")指定生成器
      * @param idGenerator
      * @return
      */
     @Bean
-    public IdentifierGenerator identifierGenerator(IdGenerator idGenerator) {
+    public IdentifierGenerator identifierGenerator(@Qualifier("redisIdGenerator") IdGenerator idGenerator) {
         return new CustomIdentifierGenerator(idGenerator);
     }
-
 
 }

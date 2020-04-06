@@ -19,17 +19,34 @@ public interface IdGenerator {
     String nextIdStr();
 
     /**
-     * 获得一组long类型别id
-     * @param nums
+     * 获取一个long类型ID数组
+     * @param size
      * @return
      */
-    long[] nextId(int nums);
+    default long[] nextId(int size) {
+        if (size <= 0) {
+            return new long[] { nextId() };
+        }
+        long[] arr = new long[size];
+        for (int i = 0; i < size; i++) {
+            arr[i] = nextId();
+        }
+        return arr;
+    }
 
     /**
-     * 获得一组String类型id
-     * @param nums
+     * 获取一个字符串类型ID数组
      * @return
      */
-    String[] nextIdStr(int nums);
+    default String[] nextIdStr(int size) {
+        if (size <= 0) {
+            return new String[] { nextIdStr() };
+        }
+        String[] arr = new String[size];
+        for (int i = 0; i < size; i++) {
+            arr[i] = nextIdStr();
+        }
+        return arr;
+    }
 
 }

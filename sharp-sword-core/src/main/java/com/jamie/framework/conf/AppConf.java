@@ -27,9 +27,4 @@ public class AppConf {
         template.setHashValueSerializer(new GenericFastJsonRedisSerializer());
         return template;
     }
-
-    @Bean
-    IdGenerator idGenerator() {
-        return new SnowflakeIdGenerator(0, 0);
-    }
 }
