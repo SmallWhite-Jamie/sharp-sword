@@ -45,5 +45,10 @@
 
 2. 在 sharp-sword-run\target 目录下会生成打包好的项目文件 **sharp-sword.tar.gz** 和 **sharp-sword.zip** 解压缩后运行 start.sh [start|stop|restart|status]
 
+### 致谢 
+
+![icon](https://dss1.bdstatic.com/6OF1bjeh1BF3odCf/it/u=2783226288,1046314317&fm=74&app=80&f=PNG?w=200&h=200)
+
+[jetbrains](https://www.jetbrains.com/) Licenses for Open Source Development
 ### License
 [Apache License 2.0](http://www.apache.org/licenses/)
