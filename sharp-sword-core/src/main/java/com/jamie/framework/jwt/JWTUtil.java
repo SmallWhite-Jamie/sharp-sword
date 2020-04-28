@@ -66,7 +66,7 @@ public class JWTUtil {
         } else {
             expireSecond = expireDuration.getSeconds();
         }
-        log.debug("generate token, username: [{}], salt: [{salt}], expireSecond: [{}]",
+        log.debug("generate token, username: [{}], salt: [{}], expireSecond: [{}]",
                 username, salt, expireSecond);
         Date expireDate = DateUtils.addSeconds(new Date(), (int) expireSecond);
         Algorithm algorithm = Algorithm.HMAC256(salt);
