@@ -89,6 +89,10 @@ public final class SnowflakeIdGenerator implements IdGenerator {
      */
     private Lock lock = new ReentrantLock();
 
+    public SnowflakeIdGenerator() {
+        this(0, 0);
+    }
+
     /**
      * 构造函数
      *

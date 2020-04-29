@@ -11,6 +11,7 @@ import com.jamie.framework.mapper.UserMapper;
 import com.jamie.framework.service.PermissionService;
 import com.jamie.framework.service.UserServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class UserServiceImpl implements UserServiceI {
     private UserMapper userMapper;
 
     @Autowired
+    @Qualifier("redisIdGenerator")
     private IdGenerator idGenerator;
 
     @Autowired

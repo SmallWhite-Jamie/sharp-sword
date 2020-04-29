@@ -2,6 +2,7 @@ package com.jamie.framework.file.controller;
 
 import com.jamie.framework.file.bean.SysResource;
 import com.jamie.framework.file.service.FileResourceService;
+import com.jamie.framework.shiro.support.ShiroAnon;
 import com.jamie.framework.util.api.ApiResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,6 +43,7 @@ public class FileResourceController {
         return ApiResult.ok();
     }
 
+    @ShiroAnon
     @GetMapping("info/{id}")
     @ApiOperation(value = "详情", notes = "根据资源ID, 获取资源详情", response = SysResource.class)
     public ApiResult info(@PathVariable String id) {

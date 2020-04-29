@@ -10,6 +10,7 @@ import com.jamie.framework.treenode.TreeNodeBuilder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class MenusServiceImpl implements MenusService {
     private AppBaseService appBaseService;
 
     @Autowired
+    @Qualifier("redisIdGenerator")
     private IdGenerator idGenerator;
 
     @Override
