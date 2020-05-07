@@ -10,6 +10,9 @@ import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author lizheng
  * @date: 16:58 2019/10/17
@@ -19,6 +22,17 @@ import org.springframework.stereotype.Component;
 public class ApplicationContextUtil implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
+
+    private static final Set<String> SHIRO_ANON_URL_SET = new HashSet<>();
+
+    public synchronized void addShiroAnonUrl(String url) {
+        SHIRO_ANON_URL_SET.add(url);
+    }
+
+    public static Set<String> getShiroAnonUrlSet() {
+        return SHIRO_ANON_URL_SET;
+    }
+
 
     public static <T> T getBean(Class<T>  cls) {
         return applicationContext.getBean(cls);

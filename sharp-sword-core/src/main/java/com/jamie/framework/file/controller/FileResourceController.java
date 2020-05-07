@@ -6,6 +6,7 @@ import com.jamie.framework.shiro.support.ShiroAnon;
 import com.jamie.framework.util.api.ApiResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,12 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.lang.ref.SoftReference;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author lizheng
  * @date: 12:13 2020/02/02
  * @Description: FileResourceController
  */
+@ShiroAnon
 @RestController
 @RequestMapping("file")
 @Api(value = "文件资源管理", tags = { "文件资源管理"})
@@ -43,7 +48,6 @@ public class FileResourceController {
         return ApiResult.ok();
     }
 
-    @ShiroAnon
     @GetMapping("info/{id}")
     @ApiOperation(value = "详情", notes = "根据资源ID, 获取资源详情", response = SysResource.class)
     public ApiResult info(@PathVariable String id) {

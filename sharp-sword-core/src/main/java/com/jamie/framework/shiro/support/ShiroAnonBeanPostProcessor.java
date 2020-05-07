@@ -1,6 +1,6 @@
 package com.jamie.framework.shiro.support;
 
-import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import com.jamie.framework.util.ApplicationContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * ShiroAnonBeanPostProcessor
@@ -30,7 +29,7 @@ import java.util.Map;
 public class ShiroAnonBeanPostProcessor implements MergedBeanDefinitionPostProcessor {
 
     @Autowired
-    private ShiroFilterFactoryBean shiroFilterFactoryBean;
+    private ApplicationContextUtil applicationContextUtil;
 
     @Override
     public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
@@ -39,7 +38,7 @@ public class ShiroAnonBeanPostProcessor implements MergedBeanDefinitionPostProce
         }
         String[] classUrls = getUrlFormClass(beanType);
         if (beanType.isAnnotationPresent(ShiroAnon.class)) {
-            this.addFilterChain(classUrls, true);
+            this.addFilterChain(classUrls);
         } else {
             Method[] methods = beanType.getMethods();
             List<String> methodUrlList = new ArrayList<>();
@@ -50,7 +49,7 @@ public class ShiroAnonBeanPostProcessor implements MergedBeanDefinitionPostProce
                 if (method.isAnnotationPresent(ShiroAnon.class)) {
                     String[] methodUrls = getUrlFormMethod(method);
                     if (classUrls.length == 0) {
-                        this.addFilterChain(methodUrls, true);
+                        this.addFilterChain(methodUrls);
                     } else {
                         for (String classUrl : classUrls) {
                             for (String methodUrl : methodUrls) {
@@ -60,31 +59,33 @@ public class ShiroAnonBeanPostProcessor implements MergedBeanDefinitionPostProce
                     }
                 }
             }
-            this.addFilterChain(methodUrlList.toArray(new String[0]), true);
+            this.addFilterChain(methodUrlList.toArray(new String[0]));
         }
     }
 
     private String concatUrl(String a, String b) {
-        if (!a.startsWith("/")) {
-            a = "/" + a;
-        }
         if (a.endsWith("/")) {
             a = a.substring(0, a.lastIndexOf("/"));
         }
         if (b.startsWith("/")) {
             b = b.substring(1);
         }
+        if (b.endsWith("}")) {
+            b = b.substring(0, b.indexOf("{"));
+        }
         return a + "/" +b;
     }
 
-    private void addFilterChain(String[] classUrls, boolean wildcard) {
+    private void addFilterChain(String[] classUrls) {
         if (classUrls.length > 0) {
-            Map<String, String> filterChainDefinitionMap = shiroFilterFactoryBean.getFilterChainDefinitionMap();
             for (String url : classUrls) {
+                if (!url.startsWith("/")) {
+                    url = "/" + url;
+                }
                 if (url.endsWith("/")) {
-                    filterChainDefinitionMap.put( url + (wildcard ? "**" : ""), "anon");
+                    applicationContextUtil.addShiroAnonUrl(url);
                 } else {
-                    filterChainDefinitionMap.put( url + "/" + (wildcard ? "**" : ""), "anon");
+                    applicationContextUtil.addShiroAnonUrl(url + "/");
                 }
             }
         }

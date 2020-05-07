@@ -7,6 +7,7 @@ import com.jamie.framework.jwt.JWTUtil;
 import com.jamie.framework.jwt.JwtProperties;
 import com.jamie.framework.jwt.JwtToken;
 import com.jamie.framework.redis.RedisService;
+import com.jamie.framework.util.ApplicationContextUtil;
 import com.jamie.framework.util.api.ApiCode;
 import com.jamie.framework.util.api.ApiResult;
 import com.jamie.framework.util.http.CookieUtil;
@@ -17,6 +18,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.util.WebUtils;
+import org.springframework.http.MediaType;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -56,6 +58,11 @@ public class JWTFilter extends AuthenticatingFilter {
         }
         String token = JWTUtil.getTokenFromRequest((HttpServletRequest) request);
         log.info("请求路径: [{}], token: [{}]", requestPath, token);
+        for (String url : ApplicationContextUtil.getShiroAnonUrlSet()) {
+            if (requestPath.startsWith(url)) {
+                return true;
+            }
+        }
         if (StringUtils.isBlank(token)) {
             return false;
         }
@@ -95,7 +102,7 @@ public class JWTFilter extends AuthenticatingFilter {
      */
     @Override
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
-        // servletResponse((HttpServletResponse) servletResponse, "访问失败");
+         servletResponse((HttpServletResponse) servletResponse, null, ApiCode.NOT_PERMISSION);
         return false;
     }
 
@@ -142,16 +149,16 @@ public class JWTFilter extends AuthenticatingFilter {
     @Override
     protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e, ServletRequest request, ServletResponse response) {
         log.warn(e.getMessage(), e);
-        servletResponse((HttpServletResponse) response, e.getMessage(), ApiCode.LOGIN_EXCEPTION.getCode());
+        servletResponse((HttpServletResponse) response, e.getMessage(), ApiCode.LOGIN_EXCEPTION);
         return false;
     }
 
-    private void servletResponse(HttpServletResponse res, String data, int code) {
+    private void servletResponse(HttpServletResponse res, String data, ApiCode code) {
         res.setStatus(200);
-        res.setHeader("Content-type", "text/json;charset=UTF-8");
+        res.setHeader("Content-type", MediaType.APPLICATION_JSON_UTF8_VALUE);
         res.setCharacterEncoding("UTF-8");
         try {
-            ApiResult result = code == 200 ? ApiResult.ok(data) : ApiResult.fail(ApiCode.LOGIN_EXCEPTION, data);
+            ApiResult result = code.getCode() == 200 ? ApiResult.ok(data) : ApiResult.fail(code, data);
             res.getWriter().write(JSONObject.toJSONString(result));
         } catch (IOException e) {
             e.printStackTrace();
