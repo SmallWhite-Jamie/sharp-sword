@@ -11,9 +11,9 @@ spring:
     #动态数据源
     dynamic:
       master:
-        jdbc-url: jdbc:mysql://192.168.152.129:3306/sharp_sword?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+        jdbc-url: jdbc:mysql://localhost:3306/sharp_sword?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
         username: root
-        password: 123456
+        password: root123456
         driver-class-name: com.mysql.jdbc.Driver
         pool-name: Master-DB
 #      slave1:

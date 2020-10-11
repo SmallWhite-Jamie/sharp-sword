@@ -31,17 +31,17 @@
             <!--<version>1.0-SNAPSHOT</version>-->
         <!--</dependency>-->
         <!-- 定时任务 xxl-job client 模块 -->
-        <dependency>
-            <groupId>com.jamie.framework</groupId>
-            <artifactId>sharp-sword-job</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.jamie.framework</groupId>-->
+<!--            <artifactId>sharp-sword-job</artifactId>-->
+<!--            <version>1.0-SNAPSHOT</version>-->
+<!--        </dependency>-->
         <!-- 定时任务 xxl-job admin server 模块, 如果单独部署(https://github.com/xuxueli/xxl-job/archive/2.1.2.tar.gz)，则无需依赖 -->
-        <dependency>
-            <groupId>com.jamie.framework</groupId>
-            <artifactId>sharp-sword-job-admin</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.jamie.framework</groupId>-->
+<!--            <artifactId>sharp-sword-job-admin</artifactId>-->
+<!--            <version>1.0-SNAPSHOT</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
