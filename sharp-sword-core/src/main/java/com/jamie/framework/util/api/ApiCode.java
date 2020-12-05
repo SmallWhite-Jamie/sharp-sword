@@ -27,12 +27,19 @@ package com.jamie.framework.util.api;
 public enum ApiCode {
 
     SUCCESS(200, "操作成功"),
+    MSG_NOT_READABLE(400, "消息不能读取"),
 
     UNAUTHORIZED(401, "非法访问"),
 
     NOT_PERMISSION(403, "没有权限"),
 
     NOT_FOUND(404, "你请求的资源不存在"),
+
+    METHOD_NOT_SUPPORTED(405, "不支持当前请求方法"),
+
+    MEDIA_TYPE_NOT_SUPPORTED(415, "不支持当前媒体类型"),
+
+    PARAM_MISS_EXCEPTION(416,"缺少必要的请求参数"),
 
     FAIL(500, "操作失败"),
 

@@ -39,8 +39,8 @@ public enum ErrorCode {
         this.type = type;
         this.msg = msg;
     }
-    private int type;
-    private String msg;
+    private final int type;
+    private final String msg;
 
     public int getType() {
         return type;
