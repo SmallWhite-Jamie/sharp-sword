@@ -7,7 +7,7 @@ package com.jamie.framework.enums;
  * @version 1.0
  * @date 2020/3/10 19:37
  */
-public enum ErrorCode {
+public enum ErrorCode implements IErrorCodeEnum {
     // 登录相关--------------------------------------START
     /**
      * 用户不存在
@@ -36,18 +36,19 @@ public enum ErrorCode {
     // 登录相关--------------------------------------END
 
     ErrorCode(int type, String msg) {
-        this.type = type;
-        this.msg = msg;
+        this.errCode = type;
+        this.errDesc = msg;
     }
-    private final int type;
-    private final String msg;
+    private final int errCode;
+    private final String errDesc;
 
-    public int getType() {
-        return type;
+    @Override
+    public int getErrCode() {
+        return 0;
     }
 
-
-    public String getMsg() {
-        return msg;
+    @Override
+    public String getErrDesc() {
+        return null;
     }
 }

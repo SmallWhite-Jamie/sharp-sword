@@ -68,18 +68,19 @@ public class ApiResult<T> implements Serializable {
         return result(apiCode,null);
     }
 
-    public static ApiResult result(ApiCode apiCode,Object data){
-        return result(apiCode,null,data);
-    }
-
-    public static ApiResult result(ApiCode apiCode,String msg,Object data){
-        String message = apiCode.getMsg();
-        if (StringUtils.isNotBlank(msg)){
-            message = msg;
-        }
+    public static ApiResult result(ApiCode apiCode, Object data){
         return ApiResult.builder()
                 .code(apiCode.getCode())
-                .msg(message)
+                .msg(apiCode.getMsg())
+                .data(data)
+                .time(new Date())
+                .build();
+    }
+
+    public static ApiResult result(int code,String msg,Object data) {
+        return ApiResult.builder()
+                .code(code)
+                .msg(msg)
                 .data(data)
                 .time(new Date())
                 .build();
@@ -94,7 +95,7 @@ public class ApiResult<T> implements Serializable {
     }
 
     public static ApiResult ok(Object data,String msg){
-        return result(ApiCode.SUCCESS,msg,data);
+        return result(ApiCode.SUCCESS.getCode(),msg,data);
     }
 
     public static ApiResult okMap(String key,Object value){
@@ -108,8 +109,11 @@ public class ApiResult<T> implements Serializable {
     }
 
     public static ApiResult fail(String msg){
-        return result(ApiCode.FAIL,msg,null);
+        return result(ApiCode.FAIL.getCode(), msg,null);
+    }
 
+    public static ApiResult fail(int code, String msg){
+        return result(code, msg,null);
     }
 
     public static ApiResult fail(ApiCode apiCode,Object data){

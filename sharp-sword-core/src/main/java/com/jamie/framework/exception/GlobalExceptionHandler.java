@@ -1,5 +1,6 @@
 package com.jamie.framework.exception;
 
+import com.baomidou.mybatisplus.extension.api.R;
 import com.jamie.framework.util.api.ApiCode;
 import com.jamie.framework.util.api.ApiResult;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,13 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(BaseException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResult baseExceptionHandler(BaseException ex) {
+        log.error(ex.getMessage(), ex);
+        return ApiResult.result(ex.getCode(), ex.getMessage(), null);
+    }
 
     @ExceptionHandler(value = Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
