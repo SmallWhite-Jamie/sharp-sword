@@ -11,9 +11,9 @@ spring:
     #动态数据源
     dynamic:
       master:
-        jdbc-url: jdbc:mysql://localhost:3306/sharp_sword?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+        jdbc-url: jdbc:mysql://125.45.191.51:9032/sharp_sword?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
         username: root
-        password: root123456
+        password: ityewm##$t458DW
         driver-class-name: com.mysql.jdbc.Driver
         pool-name: Master-DB
 #      slave1:
@@ -70,7 +70,7 @@ spring:
 logging:
   level:
     com.jamie.framework: info
-  path: D:\logs
+  path: C:\logs
 # mybatis-plus
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
