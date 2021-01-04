@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.jamie.framework.jobadmin.mapper.XxlJobInfoDao">
+<mapper namespace="com.sharp.sword.jobadmin.mapper.XxlJobInfoDao">
 
-	<resultMap id="XxlJobInfo" type="com.jamie.framework.jobadmin.core.model.XxlJobInfo" >
+	<resultMap id="XxlJobInfo" type="com.sharp.sword.jobadmin.core.model.XxlJobInfo" >
 		<result column="id" property="id" />
 
 		<result column="job_group" property="jobGroup" />
@@ -106,7 +106,7 @@
 		</trim>
 	</select>
 
-	<insert id="save" parameterType="com.jamie.framework.jobadmin.core.model.XxlJobInfo" useGeneratedKeys="true" keyProperty="id" >
+	<insert id="save" parameterType="com.sharp.sword.jobadmin.core.model.XxlJobInfo" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_job_info (
 			job_group,
 			job_cron,
@@ -164,7 +164,7 @@
 		WHERE t.id = #{id}
 	</select>
 
-	<update id="update" parameterType="com.jamie.framework.jobadmin.core.model.XxlJobInfo" >
+	<update id="update" parameterType="com.sharp.sword.jobadmin.core.model.XxlJobInfo" >
 		UPDATE xxl_job_info
 		SET
 			job_group = #{jobGroup},
@@ -217,7 +217,7 @@
 		LIMIT #{pagesize}
 	</select>
 
-	<update id="scheduleUpdate" parameterType="com.jamie.framework.jobadmin.core.model.XxlJobInfo"  >
+	<update id="scheduleUpdate" parameterType="com.sharp.sword.jobadmin.core.model.XxlJobInfo"  >
 		UPDATE xxl_job_info
 		SET
 			trigger_last_time = #{triggerLastTime},

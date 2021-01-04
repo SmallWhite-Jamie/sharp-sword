@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.jamie.framework.log.mapper.OpLogMapper">
-    <insert id="batchInsert" parameterType="com.jamie.framework.log.op.OpLog">
+<mapper namespace="com.sharp.sword.log.mapper.OpLogMapper">
+    <insert id="batchInsert" parameterType="com.sharp.sword.log.op.OpLog">
         insert into sys_op_log(id,user_id,url,method,class_method,module_name,description,client_type,op,crt_time)VALUES
         <foreach collection="logs" item="log" separator=",">
             (#{log.id},#{log.userId},#{log.url},#{log.method,typeHandler=EnumValueTypeHandler},#{log.classMethod},#{log.moduleName},#{log.description},#{log.clientType,typeHandler=EnumValueTypeHandler},#{log.op,typeHandler=EnumValueTypeHandler},#{log.crtTime})

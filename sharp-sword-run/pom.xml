@@ -56,7 +56,7 @@
                     <archive>
                         <manifest>
                             <!-- 指定入口函数 -->
-                            <mainClass>com.jamie.framework.ApplicationRun</mainClass>
+                            <mainClass>com.sharp.sword.ApplicationRun</mainClass>
                             <!-- 是否添加依赖的jar路径配置 -->
                             <addClasspath>true</addClasspath>
                             <!-- 依赖的jar包存放位置，和生成的jar放在同一级目录下 -->

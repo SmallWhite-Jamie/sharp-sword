@@ -1,0 +1,71 @@
+package com.sharp.sword.log.op;
+
+import com.sharp.sword.idgenerator.IdGenerator;
+import com.sharp.sword.log.enumeration.RequestMethod;
+import com.sharp.sword.redis.RedisService;
+import com.sharp.sword.service.impl.AppBaseService;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+
+/**
+ * @author lizheng
+ * @date: 12:20 2020/02/13
+ * @Description: OpLogWriteAspect
+ */
+@Aspect
+@Component
+@Slf4j
+@Order(101)
+public class OpLogWriteAspect {
+
+    public static final String REDIS_KEY = "OP_LOG_WRITE";
+
+    @Autowired
+    private RedisService redisService;
+
+    @Autowired
+    private AppBaseService appBaseService;
+
+    @Autowired
+    @Qualifier("redisIdGenerator")
+    private IdGenerator idGenerator;
+
+
+    @Pointcut("@annotation(com.sharp.sword.log.op.OpLogWrite)")
+    public void pointcut() {
+
+    }
+
+    @Before("pointcut() && @annotation(logWrite)")
+    public void before(JoinPoint joinPoint, OpLogWrite logWrite) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            HttpServletRequest request = attributes.getRequest();
+            String classMethod = joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName();
+            OpLog log = new OpLog();
+            log.setId(idGenerator.nextIdStr());
+            log.setClassMethod(classMethod);
+            log.setClientType(logWrite.clientType());
+            log.setCrtTime(new Date());
+            log.setDescription(logWrite.description());
+            log.setMethod(RequestMethod.valueOf(request.getMethod().toUpperCase()));
+            log.setModuleName(logWrite.moduleName());
+            log.setOp(logWrite.op());
+            log.setUrl(request.getRequestURI());
+            // log.setUserId(appBaseService.getUserId());
+            redisService.listRPush(REDIS_KEY, log);
+        }
+    }
+}
