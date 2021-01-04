@@ -30,6 +30,7 @@
         <module>sharp-sword-code-generator</module>
         <module>sharp-sword-job</module>
         <module>sharp-sword-job-admin</module>
+        <module>sharp-sword-dcs-lock</module>
     </modules>
 
     <dependencyManagement>
@@ -57,6 +58,11 @@
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.7</version>
             </plugin>
         </plugins>
     </build>

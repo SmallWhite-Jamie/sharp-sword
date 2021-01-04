@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.sharp.sword.starter.dsclock.config.RedissonAutoConfiguration,\
+com.sharp.sword.starter.dsclock.config.DistributedLockAutoConfiguration
